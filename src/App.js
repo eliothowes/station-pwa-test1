@@ -3,6 +3,7 @@ import './App.css';
 
 const App = () => {
   const deferredPrompt = React.useRef(null)
+  const [isInstalled, setIsInstalled] = React.useState(false)
   const [showInstall, setShowInstall] = React.useState(false)
 
   React.useEffect(() => {
@@ -14,6 +15,13 @@ const App = () => {
       // Optionally, send analytics event that PWA install promo was shown.
       console.log(`'beforeinstallprompt' event was fired.`);
     })
+
+    window.addEventListener('appinstalled', (event) => {
+      console.log('👍', 'appinstalled', event);
+      // Clear the deferredPrompt so it can be garbage collected
+      window.deferredPrompt = null;
+      setIsInstalled(true)
+    });
   }, [])
 
   const installApp = async () => {
@@ -42,6 +50,11 @@ const App = () => {
           <button onClick={installApp}>
             Install app
           </button>
+        </div>
+      )}
+      {isInstalled && (
+        <div className="install-banner">
+          App is installed
         </div>
       )}
     </div>
