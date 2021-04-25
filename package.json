@@ -1,4 +1,5 @@
 {
+  "homepage": "https://eliothowes1090.github.io/station-pwa-test1/",
   "name": "station-pwa-test1",
   "version": "0.1.0",
   "private": true,
@@ -25,6 +26,8 @@
     "workbox-streams": "^5.1.3"
   },
   "scripts": {
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
