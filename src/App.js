@@ -3,22 +3,48 @@ import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  const deferredPrompt = React.useRef(null)
+  const [showInstall, setShowInstall] = React.useState(false)
+
+  componentDidMount() {
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault()
+      deferredPrompt.current = e;
+
+      setShowInstall(true);
+      // Optionally, send analytics event that PWA install promo was shown.
+      console.log(`'beforeinstallprompt' event was fired.`);
+    })
+  }
+
+  const installApp = () => {
+    console.log('👍', 'butInstall-clicked');
+    const promptEvent = deferredPrompt.current;
+    if (!deferredPrompt) {
+      // The deferred prompt isn't available.
+      return;
+    }
+    // Show the install prompt.
+    promptEvent.prompt();
+    // Log the result
+    const result = await promptEvent.userChoice;
+    console.log('👍', 'userChoice', result);
+    // Reset the deferred prompt variable, since
+    // prompt() can only be called once.
+    deferredPrompt.current = null;
+    // Hide the install button.
+    setShowInstall(false)
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {showInstall && (
+        <div className="install-banner">
+          <button onClick={installApp()}>
+            Install app
+          </button>
+        </div>
+      )}
     </div>
   );
 }
