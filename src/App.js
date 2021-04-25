@@ -1,12 +1,11 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-function App() {
+const App = () => {
   const deferredPrompt = React.useRef(null)
   const [showInstall, setShowInstall] = React.useState(false)
 
-  componentDidMount() {
+  React.useEffect(() => {
     window.addEventListener('beforeinstallprompt', e => {
       e.preventDefault()
       deferredPrompt.current = e;
@@ -15,7 +14,7 @@ function App() {
       // Optionally, send analytics event that PWA install promo was shown.
       console.log(`'beforeinstallprompt' event was fired.`);
     })
-  }
+  }, [])
 
   const installApp = () => {
     console.log('👍', 'butInstall-clicked');
