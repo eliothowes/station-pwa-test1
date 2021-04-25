@@ -16,7 +16,7 @@ const App = () => {
     })
   }, [])
 
-  const installApp = () => {
+  const installApp = async () => {
     console.log('👍', 'butInstall-clicked');
     const promptEvent = deferredPrompt.current;
     if (!deferredPrompt) {
@@ -39,7 +39,7 @@ const App = () => {
     <div className="App">
       {showInstall && (
         <div className="install-banner">
-          <button onClick={installApp()}>
+          <button onClick={installApp}>
             Install app
           </button>
         </div>
