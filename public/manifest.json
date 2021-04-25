@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Station",
+  "name": "Station PWA Test",
   "icons": [
     {
       "src": "favicon.ico",
