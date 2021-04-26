@@ -22,6 +22,15 @@ const App = () => {
       window.deferredPrompt = null;
       setIsInstalled(true)
     });
+
+    const checkInstallationStatus = async () => {
+      const relatedApps = await navigator.getInstalledRelatedApps();
+      relatedApps.forEach((app) => {
+      console.log(app.id, app.platform, app.url);
+      });
+    }
+
+    checkInstallationStatus();
   }, [])
 
   const installApp = async () => {

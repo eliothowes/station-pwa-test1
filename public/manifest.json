@@ -18,7 +18,11 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "related_applications": [{
+    "platform": "webapp",
+    "url": "https://dreamy-khorana-b8a419.netlify.app/"
+  }],
   "display": "fullscreen",
   "theme_color": "#000000",
   "background_color": "#ffffff"
