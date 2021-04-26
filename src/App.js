@@ -2,9 +2,9 @@ import React from 'react';
 import './App.css';
 
 const App = () => {
-  const deferredPrompt = React.useRef(null)
-  const [isInstalled, setIsInstalled] = React.useState(false)
-  const [showInstall, setShowInstall] = React.useState(false)
+  const deferredPrompt = React.useRef(null);
+  const [isInstalled, setIsInstalled] = React.useState(false);
+  const [showInstall, setShowInstall] = React.useState(false);
 
   React.useEffect(() => {
     window.addEventListener('beforeinstallprompt', e => {
@@ -45,18 +45,23 @@ const App = () => {
 
   return (
     <div className="App">
-      {showInstall && (
-        <div className="install-banner">
-          <button onClick={installApp}>
-            Install app
-          </button>
-        </div>
-      )}
-      {isInstalled && (
-        <div className="install-banner">
-          App is installed
-        </div>
-      )}
+      <div>
+        {showInstall && (
+          <div className="install-banner">
+            <button onClick={installApp}>
+              Install app
+            </button>
+          </div>
+        )}
+        {isInstalled && (
+          <div className="install-banner">
+            App is installed
+          </div>
+        )}
+      </div>
+      <div>
+
+      </div>
     </div>
   );
 }
