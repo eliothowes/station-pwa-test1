@@ -21,7 +21,7 @@
   "start_url": ".",
   "related_applications": [{
     "platform": "webapp",
-    "url": "."
+    "url": "./manifest.json"
   }],
   "display": "fullscreen",
   "theme_color": "#000000",
