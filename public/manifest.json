@@ -21,7 +21,7 @@
   "start_url": ".",
   "related_applications": [{
     "platform": "webapp",
-    "url": "./manifest.json"
+    "url": "https://dreamy-khorana-b8a419.netlify.app/manifest.json"
   }],
   "display": "fullscreen",
   "theme_color": "#000000",
