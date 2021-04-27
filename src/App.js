@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import PulseOximeter from './PulseOximeter'
 
 const App = () => {
   const deferredPrompt = React.useRef(null);
@@ -22,18 +23,6 @@ const App = () => {
       window.deferredPrompt = null;
       setIsInstalled(true)
     });
-
-    const checkInstallationStatus = async () => {
-      const relatedApps = await navigator.getInstalledRelatedApps();
-      console.log('\x1b[31m\x1b[47m%s\x1b[0m', '<<< Start >>>', '\n');
-      console.log(relatedApps);
-      console.log('\x1b[0m%s\x1b[32m\x1b[47m%s\x1b[0m', '\n', '<<< Finish >>>', '\n');
-      relatedApps.forEach((app) => {
-      console.log(app.id, app.platform, app.url);
-      });
-    }
-
-    checkInstallationStatus();
   }, [])
 
   const installApp = async () => {
@@ -72,7 +61,7 @@ const App = () => {
         )}
       </div>
       <div>
-
+          <PulseOximeter />
       </div>
     </div>
   );
