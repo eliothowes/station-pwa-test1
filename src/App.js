@@ -99,6 +99,7 @@ const App = () => {
         </Route>
       </Switch>
     </Router>
+    <button onClick={() => document.location.reload()}>Refresh</button>
     </div>
   );
 }
