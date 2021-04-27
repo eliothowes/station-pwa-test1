@@ -1,11 +1,20 @@
 import React from 'react';
 import './App.css';
 import PulseOximeter from './PulseOximeter'
+import PretendConsultation from './PretendConsultation'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Redirect,
+  Route,
+} from "react-router-dom";
 
 const App = () => {
   const deferredPrompt = React.useRef(null);
   const [isInstalled, setIsInstalled] = React.useState(false);
   const [showInstall, setShowInstall] = React.useState(false);
+
+  const [connectedUsbDevices, setConnectedUsbDevices] = React.useState([])
 
   React.useEffect(() => {
     window.addEventListener('beforeinstallprompt', e => {
@@ -44,8 +53,26 @@ const App = () => {
     setShowInstall(false)
   }
 
+  function ConditionalRoute({ children, ...rest }) {
+    return (
+      <Route
+        {...rest}
+        render={() =>
+          connectedUsbDevices.length > 0 ? (
+            children
+          ) : (
+            <Redirect
+              to={{pathname: "/",}}
+            />
+          )
+        }
+      />
+    );
+  }
+
   return (
     <div className="App">
+    <Router>
       <div>
         {showInstall && (
           <div className="install-banner">
@@ -60,9 +87,18 @@ const App = () => {
           </div>
         )}
       </div>
-      <div>
-          <PulseOximeter />
-      </div>
+      <Switch>
+        <ConditionalRoute path="/consult">
+          <PretendConsultation connectedUsbDevices={connectedUsbDevices} />
+        </ConditionalRoute>
+        <Route path="/">
+          <PulseOximeter
+            connectedUsbDevices={connectedUsbDevices}
+            setConnectedUsbDevices={setConnectedUsbDevices}
+          />
+        </Route>
+      </Switch>
+    </Router>
     </div>
   );
 }

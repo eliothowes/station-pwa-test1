@@ -1,4 +1,7 @@
 import React from 'react';
+import {
+  Link
+} from "react-router-dom";
 
 const EXPECTED_DEVICES = [
   {
@@ -7,12 +10,15 @@ const EXPECTED_DEVICES = [
   }
 ]
 
-const PulseOximeter = () => {
-  const [connectedUsbDevices, setConnectedUsbDevices] = React.useState([])
+const PulseOximeter = ({connectedUsbDevices, setConnectedUsbDevices}) => {
+
   const [expectedDevicesAreConnected, setExpectedDevicesAreConnected] = React.useState(false)
 
   const getDevices = async () => {
     const devices = await navigator.usb.getDevices({filter: []});
+    console.log('\x1b[31m\x1b[47m%s\x1b[0m', '<<< Start >>>', '\n');
+    console.log('devices', devices);
+    console.log('\x1b[0m%s\x1b[32m\x1b[47m%s\x1b[0m', '\n', '<<< Finish >>>', '\n');
     setConnectedUsbDevices(devices)
   }
 
@@ -47,7 +53,7 @@ const PulseOximeter = () => {
 
   return (
     <div>
-      <h1>Pulse Oximeter Flow</h1>
+      <h1>Pulse Oximeter Setup Page</h1>
       {!expectedDevicesAreConnected && (
         <button onClick={requestAccessToUsbDevices}>Connect USB Devices</button>
       )}
@@ -61,6 +67,9 @@ const PulseOximeter = () => {
           )
         })}
       </p>
+      {expectedDevicesAreConnected && (
+        <Link to="/consult">Consult</Link>
+      )}
     </div>
   );
 };
