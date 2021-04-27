@@ -5,9 +5,9 @@ import {
 
 
 const PretendConsultation = ({connectedUsbDevices}) => {
-  const [patientMessage, setPatientMessage] = React.useState(null)
-  const [clinicianMessage, setClinicianMessage] = React.useState(null)
-  const [deviceData, setDeviceData] = React.useState([]);
+  // const [patientMessage, setPatientMessage] = React.useState(null)
+  // const [clinicianMessage, setClinicianMessage] = React.useState(null)
+  // const [deviceData, setDeviceData] = React.useState([]);
   const [device, setDevice] = React.useState(null);
 
   React.useEffect(() => {
