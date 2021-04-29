@@ -49,6 +49,9 @@ const PretendConsultation = ({connectedUsbDevices}) => {
         <h3>Testing stuff out here</h3>
         <h3>Testing stuff out here</h3>
         <h3>Test</h3>
+        <h3>Test</h3>
+        <h3>Test</h3>
+        <h3>Test</h3>
       </div>
     </div>
   );
