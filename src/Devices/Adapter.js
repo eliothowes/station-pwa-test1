@@ -78,7 +78,6 @@ export default class Adapter extends EventEmitter {
   }
 
   _changeStatus (newStatus) {
-
     if (!validStatuses.includes(newStatus)) {
       throw new Error(`attempting to transition to status ${newStatus}. This is not allowed`);
     }
@@ -97,11 +96,12 @@ export default class Adapter extends EventEmitter {
       this.emit('change');
     }
     else if (newStatus === 'connecting') {
+      console.log(`Status update from "${this.status}" => "connecting"`)
       this.status = 'connecting';
-
       this.emit('change');
     }
     else if (newStatus === 'connected') {
+      console.log(`Status update from "${this.status}" => "connected"`)
       this.status = 'connected';
       this.error = null;
       this.emit('change');
@@ -138,7 +138,7 @@ export default class Adapter extends EventEmitter {
    * @param {Object[]} dataArray Array of arbitrary data objects
    */
   _processDataArray (dataArray) {
-    
+
     this.data = this.data.concat(dataArray).slice(-this._dataBufferSize);
     dataArray.forEach(packet => this.emit('data', packet));
     this.numberOfPacketsReceived += dataArray.length;
