@@ -8,7 +8,6 @@ import {
   Redirect,
   Route,
 } from "react-router-dom";
-import ETagWatcher from './utils/etag_watcher';
 
 const App = () => {
   const deferredPrompt = React.useRef(null);
@@ -16,7 +15,6 @@ const App = () => {
   const [showInstall, setShowInstall] = React.useState(false);
 
   const [connectedUsbDevices, setConnectedUsbDevices] = React.useState([])
-  const _eTagWatcher = new ETagWatcher('/static/js/bundle.js');
 
   React.useEffect(() => {
 
