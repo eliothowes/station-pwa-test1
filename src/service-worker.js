@@ -64,7 +64,13 @@ registerRoute(
 // This allows the web app to trigger skipWaiting via
 // registration.waiting.postMessage({type: 'SKIP_WAITING'})
 self.addEventListener('message', (event) => {
+  console.log('\x1b[31m\x1b[47m%s\x1b[0m', '<<< Start >>>', '\n');
+  console.log('message');
+  console.log('\x1b[0m%s\x1b[32m\x1b[47m%s\x1b[0m', '\n', '<<< Finish >>>', '\n');
   if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('\x1b[31m\x1b[47m%s\x1b[0m', '<<< Start >>>', '\n');
+    console.log('Skip waiting');
+    console.log('\x1b[0m%s\x1b[32m\x1b[47m%s\x1b[0m', '\n', '<<< Finish >>>', '\n');
     self.skipWaiting();
   }
 });
