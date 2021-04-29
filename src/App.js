@@ -91,6 +91,7 @@ const App = () => {
           </div>
         )}
       </div>
+      <h1>Some tests</h1>
       <Switch>
         <ConditionalRoute path="/consult">
           <PretendConsultation connectedUsbDevices={connectedUsbDevices} />
