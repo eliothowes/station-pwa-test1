@@ -100,9 +100,14 @@ export default class Nonin3231 extends Adapter {
     this._usb = new AbstractUsb(device);
     const usb = this._usb;
 
-    await usb.open();
-    await usb.selectConfiguration(1);
-    await usb.claimInterface(1);
+    try {
+      await usb.open();
+      await usb.selectConfiguration(1);
+      await usb.claimInterface(1);
+    }
+    catch (err) {
+      window.alert(err)
+    }
 
     const inEndpointNumber = device.configuration.interfaces[1].alternates[0].endpoints[1].endpointNumber;
     const outEndpointNumber = device.configuration.interfaces[1].alternates[0].endpoints[0].endpointNumber;
