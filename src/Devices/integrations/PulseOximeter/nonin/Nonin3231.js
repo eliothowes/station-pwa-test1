@@ -107,14 +107,14 @@ export default class Nonin3231 extends Adapter {
     // HACK: For chromeos
     let inEndpointNumber;
     let outEndpointNumber;
-    if (navigator.userAgent.match(/webview$/)) {
+    // if (navigator.userAgent.match(/webview$/)) {
       outEndpointNumber = this._usb.configuration.interfaces[1].endpoints.find(ep => ep.direction === 'out').address;
       inEndpointNumber = this._usb.configuration.interfaces[1].endpoints.find(ep => ep.direction === 'in').address;
-    }
-    else {
-      inEndpointNumber = device.configuration.interfaces[1].alternates[0].endpoints[1].endpointNumber;
-      outEndpointNumber = device.configuration.interfaces[1].alternates[0].endpoints[0].endpointNumber;
-    }
+    // }
+    // else {
+    //   inEndpointNumber = device.configuration.interfaces[1].alternates[0].endpoints[1].endpointNumber;
+    //   outEndpointNumber = device.configuration.interfaces[1].alternates[0].endpoints[0].endpointNumber;
+    // }
 
     this._inEndpointNumber = inEndpointNumber;
     this._outEndpointNumber = outEndpointNumber;
