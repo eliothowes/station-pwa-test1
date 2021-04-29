@@ -53,7 +53,6 @@ const PulseOximeter = ({connectedUsbDevices, setConnectedUsbDevices}) => {
 
   return (
     <div>
-      <h1>New Change</h1>
       <h1>Pulse Oximeter Setup Page</h1>
       {!expectedDevicesAreConnected && (
         <button onClick={requestAccessToUsbDevices}>Connect USB Devices</button>
