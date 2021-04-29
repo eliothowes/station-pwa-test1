@@ -2,17 +2,32 @@ import React from 'react';
 import {
   Link
 } from "react-router-dom";
+import {throttle} from 'lodash';
+import PulseOxData from './PulseOxData'
 
+const DATA_THROTTLE = 20;
 
-const PretendConsultation = ({connectedUsbDevices}) => {
+const PretendConsultation = ({connectedUsbDevices, pulseOxAdapter}) => {
   // const [patientMessage, setPatientMessage] = React.useState(null)
   // const [clinicianMessage, setClinicianMessage] = React.useState(null)
   // const [deviceData, setDeviceData] = React.useState([]);
   const [device, setDevice] = React.useState(null);
+  const [data, setData] = React.useState({});
+
+
+  const manageData = throttle((event) => {
+    setData({
+      status: pulseOxAdapter.status,
+      data: event.data
+    });
+  }, DATA_THROTTLE);
 
   React.useEffect(() => {
     const device = getDevice(7229)
     setDevice(device)
+
+    pulseOxAdapter.on('data', manageData)
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -21,8 +36,9 @@ const PretendConsultation = ({connectedUsbDevices}) => {
   }
 
   const handleConnect = () => {
-
+    pulseOxAdapter.open();
   }
+
 
   return (
     <div>
@@ -33,25 +49,9 @@ const PretendConsultation = ({connectedUsbDevices}) => {
         <div style={{marginTop: '1em'}}>
         <button onClick={handleConnect}>Start giving me data</button>
         </div>
-        <div>
-          <h3>Clinician side</h3>
-          {/* <p>{clinicianMessage}</p>
-          <p>SP02: {spO2}</p>
-          <p>Pulse: {pulse}</p> */}
-        </div>
-        <div>
-          <h3>Patient side</h3>
-          {/* <p>{patientMessage}</p>
-          <p>SP02: {spO2}</p>
-          <p>Pulse: {pulse}</p> */}
-        </div>
-        <h3>Testing stuff out here</h3>
-        <h3>Testing stuff out here</h3>
-        <h3>Testing stuff out here</h3>
-        <h3>Test</h3>
-        <h3>Test</h3>
-        <h3>Test</h3>
-        <h3>Test</h3>
+      </div>
+      <div style={{marginTop: '3em'}}>
+        <PulseOxData data={data} pulseOximeter={pulseOxAdapter} />
       </div>
     </div>
   );

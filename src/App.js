@@ -15,6 +15,7 @@ const App = () => {
   const [showInstall, setShowInstall] = React.useState(false);
 
   const [connectedUsbDevices, setConnectedUsbDevices] = React.useState([])
+  const [pulseOxAdapter, setPulseOxAdapter] = React.useState({})
 
   React.useEffect(() => {
 
@@ -91,15 +92,15 @@ const App = () => {
           </div>
         )}
       </div>
-      <h1>Some tests 12.43</h1>
       <Switch>
         <ConditionalRoute path="/consult">
-          <PretendConsultation connectedUsbDevices={connectedUsbDevices} />
+          <PretendConsultation connectedUsbDevices={connectedUsbDevices} pulseOxAdapter={pulseOxAdapter} />
         </ConditionalRoute>
         <Route path="/">
           <PulseOximeter
             connectedUsbDevices={connectedUsbDevices}
             setConnectedUsbDevices={setConnectedUsbDevices}
+            setPulseOxAdapter={setPulseOxAdapter}
           />
         </Route>
       </Switch>

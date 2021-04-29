@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Link
 } from "react-router-dom";
+import PulseOximeterLibrary from './Devices/integrations/PulseOximeter'
 
 const EXPECTED_DEVICES = [
   {
@@ -10,16 +11,17 @@ const EXPECTED_DEVICES = [
   }
 ]
 
-const PulseOximeter = ({connectedUsbDevices, setConnectedUsbDevices}) => {
+const PulseOximeter = ({connectedUsbDevices, setConnectedUsbDevices, setPulseOxAdapter}) => {
 
   const [expectedDevicesAreConnected, setExpectedDevicesAreConnected] = React.useState(false)
 
   const getDevices = async () => {
     const devices = await navigator.usb.getDevices({filter: []});
-    console.log('\x1b[31m\x1b[47m%s\x1b[0m', '<<< Start >>>', '\n');
-    console.log('devices', devices);
-    console.log('\x1b[0m%s\x1b[32m\x1b[47m%s\x1b[0m', '\n', '<<< Finish >>>', '\n');
+
+    const adapter = await PulseOximeterLibrary.requestAdapter('nonin-3231-usb'); ;
+
     setConnectedUsbDevices(devices)
+    setPulseOxAdapter(adapter)
   }
 
   React.useEffect(() => {
