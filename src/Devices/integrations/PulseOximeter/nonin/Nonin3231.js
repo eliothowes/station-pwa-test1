@@ -83,16 +83,8 @@ export default class Nonin3231 extends Adapter {
 
     let device;
     try {
-      // HACK: For chromeos
-      if (navigator.userAgent.match(/webview$/)) {
-        const devices = await AbstractUsb.getDevices();
-        device = devices.find(device => device.vendorId === this.constructor.connectionProperties.vendorId);
-      }
-      else {
-        device = await navigator.usb.requestDevice({
-          filters: [this.constructor.connectionProperties]
-        });
-      }
+      const devices = await AbstractUsb.getDevices();
+      device = devices.find(device => device.vendorId === this.constructor.connectionProperties.vendorId);
     }
     catch (error) {
       this._changeStatus('disconnected');
