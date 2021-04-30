@@ -1,4 +1,7 @@
 import React from 'react';
+import {
+  Link
+} from "react-router-dom";
 
 const PulseOxData = ({data, pulseOximeter}) => {
   const [patientMessage, setPatientMessage] = React.useState(null)
@@ -34,6 +37,21 @@ const PulseOxData = ({data, pulseOximeter}) => {
   }
 
   React.useEffect(() => {
+    const openDevice = async () => {
+      await pulseOximeter.open();
+    }
+    const closeDevice = async () => {
+      await pulseOximeter.close();
+    }
+    openDevice()
+
+    return () => {
+      closeDevice()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  React.useEffect(() => {
     updatePatientMessage()
 
     return () => {
@@ -41,8 +59,12 @@ const PulseOxData = ({data, pulseOximeter}) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pulseOximeter.status, fingerIn, searching])
+
   return (
   <div>
+  <div>
+  <Link to="/consult">Stop giving me data</Link>
+  </div>
     <h3>Patient side</h3>
     <p>{patientMessage}</p>
     <p>SP02: {spO2}</p>

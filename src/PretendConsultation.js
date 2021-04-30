@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  Link
+  Switch,
+  Route,
+  Link,
+  useRouteMatch
 } from "react-router-dom";
 import {throttle} from 'lodash';
 import PulseOxData from './PulseOxData'
@@ -13,6 +16,7 @@ const PretendConsultation = ({connectedUsbDevices, pulseOxAdapter}) => {
   // const [deviceData, setDeviceData] = React.useState([]);
   const [device, setDevice] = React.useState(null);
   const [data, setData] = React.useState({});
+  const {path, url} = useRouteMatch();
 
 
   const manageData = throttle((event) => {
@@ -35,9 +39,6 @@ const PretendConsultation = ({connectedUsbDevices, pulseOxAdapter}) => {
     return connectedUsbDevices.find(device => device.vendorId === deviceIdentifier)
   }
 
-  const handleConnect = () => {
-    pulseOxAdapter.open();
-  }
 
 
   return (
@@ -46,12 +47,16 @@ const PretendConsultation = ({connectedUsbDevices, pulseOxAdapter}) => {
       <div style={{marginTop: '3em'}}>
         <h1>Pulse Oximeter Connect Page</h1>
         <p>Pulse Ox: {device && `${device.vendorId}`}</p>
-        <div style={{marginTop: '1em'}}>
-        <button onClick={handleConnect}>Start giving me data</button>
-        </div>
       </div>
       <div style={{marginTop: '3em'}}>
-        <PulseOxData data={data} pulseOximeter={pulseOxAdapter} />
+      <Switch>
+        <Route exact path={path}>
+          <Link to={`${url}/data`}>Start giving me data</Link>
+        </Route>
+        <Route path={`${path}/data`}>
+          <PulseOxData data={data} pulseOximeter={pulseOxAdapter} />
+        </Route>
+      </Switch>
       </div>
     </div>
   );
