@@ -35,9 +35,6 @@ export default class AbstractUsb {
   }
 
   claimInterface (num) {
-    console.log('\x1b[31m\x1b[47m%s\x1b[0m', '<<< Start >>>', '\n');
-    console.log('Claim interface', this.device);
-    console.log('\x1b[0m%s\x1b[32m\x1b[47m%s\x1b[0m', '\n', '<<< Finish >>>', '\n');
     return this.device.claimInterface(num);
   }
 

@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Link
 } from "react-router-dom";
-import PulseOximeterLibrary from './Devices/integrations/PulseOximeter'
+import PulseOximeterLibrary from '../../Devices/integrations/PulseOximeter'
 
 const EXPECTED_DEVICES = [
   {
@@ -12,7 +12,6 @@ const EXPECTED_DEVICES = [
 ]
 
 const PulseOximeter = ({connectedUsbDevices, setConnectedUsbDevices, setPulseOxAdapter}) => {
-
   const [expectedDevicesAreConnected, setExpectedDevicesAreConnected] = React.useState(false)
 
   const getDevices = async () => {
@@ -55,6 +54,9 @@ const PulseOximeter = ({connectedUsbDevices, setConnectedUsbDevices, setPulseOxA
 
   return (
     <div>
+      <ul style={{listStyle: 'none', textAlign: 'left'}}>
+        <li><Link to="/">Home</Link></li>
+      </ul>
       <h1>Pulse Oximeter Setup Page</h1>
       {!expectedDevicesAreConnected && (
         <button onClick={requestAccessToUsbDevices}>Connect USB Devices</button>
@@ -70,7 +72,7 @@ const PulseOximeter = ({connectedUsbDevices, setConnectedUsbDevices, setPulseOxA
         })}
       </p>
       {expectedDevicesAreConnected && (
-        <Link to="/consult">Consult</Link>
+        <Link to="/pulseoximeter/consult">Consult</Link>
       )}
     </div>
   );

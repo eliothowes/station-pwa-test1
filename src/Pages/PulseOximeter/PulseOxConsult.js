@@ -11,9 +11,6 @@ import PulseOxData from './PulseOxData'
 const DATA_THROTTLE = 20;
 
 const PretendConsultation = ({connectedUsbDevices, pulseOxAdapter}) => {
-  // const [patientMessage, setPatientMessage] = React.useState(null)
-  // const [clinicianMessage, setClinicianMessage] = React.useState(null)
-  // const [deviceData, setDeviceData] = React.useState([]);
   const [device, setDevice] = React.useState(null);
   const [data, setData] = React.useState({});
   const {path, url} = useRouteMatch();
@@ -39,11 +36,12 @@ const PretendConsultation = ({connectedUsbDevices, pulseOxAdapter}) => {
     return connectedUsbDevices.find(device => device.vendorId === deviceIdentifier)
   }
 
-
-
   return (
     <div>
-      <Link to="/">Go Home</Link>
+        <ul style={{listStyle: 'none', textAlign: 'left'}}>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/pulseoximeter">Back to Pulse Oximeter Setup</Link></li>
+      </ul>
       <div style={{marginTop: '3em'}}>
         <h1>Pulse Oximeter Connect Page</h1>
         <p>Pulse Ox: {device && `${device.vendorId}`}</p>

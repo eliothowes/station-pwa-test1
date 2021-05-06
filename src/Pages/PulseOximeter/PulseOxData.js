@@ -62,9 +62,9 @@ const PulseOxData = ({data, pulseOximeter}) => {
 
   return (
   <div>
-  <div>
-  <Link to="/consult">Stop giving me data</Link>
-  </div>
+    <div>
+      <Link to="/pulseoximeter/consult">Stop giving me data</Link>
+    </div>
     <h3>Patient side</h3>
     <p>{patientMessage}</p>
     <p>SP02: {spO2}</p>

@@ -1,7 +1,10 @@
 import React from 'react';
 import './App.css';
-import PulseOximeter from './PulseOximeter'
-import PretendConsultation from './PretendConsultation'
+import DeviceSelector from './Pages/DeviceSelector'
+import PulseOximeter from './Pages/PulseOximeter/PulseOximeter'
+import PulseOxConsult from './Pages/PulseOximeter/PulseOxConsult'
+import Thermometer from './Pages/Thermometer/Thermometer'
+import ThermometerConsult from './Pages/Thermometer/ThermometerConsult'
 import {
   BrowserRouter as Router,
   Switch,
@@ -17,9 +20,8 @@ const App = () => {
   const [connectedUsbDevices, setConnectedUsbDevices] = React.useState([])
   const [pulseOxAdapter, setPulseOxAdapter] = React.useState({})
 
-  React.useEffect(() => {
-
-  })
+  const [connectedBleDevices, setConnectedBleDevices] = React.useState([])
+  const [thermometerAdapter, setThermometerAdapter] = React.useState({})
 
   React.useEffect(() => {
     window.addEventListener('beforeinstallprompt', e => {
@@ -77,7 +79,6 @@ const App = () => {
 
   return (
     <div className="App">
-    <Router>
       <div>
         {showInstall && (
           <div className="install-banner">
@@ -92,20 +93,39 @@ const App = () => {
           </div>
         )}
       </div>
-      <Switch>
-        <ConditionalRoute path="/consult">
-          <PretendConsultation connectedUsbDevices={connectedUsbDevices} pulseOxAdapter={pulseOxAdapter} />
-        </ConditionalRoute>
-        <Route path="/">
-          <PulseOximeter
-            connectedUsbDevices={connectedUsbDevices}
-            setConnectedUsbDevices={setConnectedUsbDevices}
-            setPulseOxAdapter={setPulseOxAdapter}
-          />
-        </Route>
-      </Switch>
-    </Router>
-    <button onClick={() => document.location.reload()}>Refresh</button>
+      <Router>
+        <Switch>
+          <ConditionalRoute path="/pulseoximeter/consult">
+            <PulseOxConsult
+              connectedUsbDevices={connectedUsbDevices}
+              pulseOxAdapter={pulseOxAdapter}
+            />
+          </ConditionalRoute>
+          <Route path="/pulseoximeter">
+            <PulseOximeter
+              connectedUsbDevices={connectedUsbDevices}
+              setConnectedUsbDevices={setConnectedUsbDevices}
+              setPulseOxAdapter={setPulseOxAdapter}
+            />
+          </Route>
+          <Route path="/thermometer/consult">
+            <ThermometerConsult
+              connectedBleDevices={connectedBleDevices}
+              thermometerAdapter={thermometerAdapter}
+            />
+          </Route>
+          <Route path="/thermometer">
+            <Thermometer
+              connectedBleDevices={connectedBleDevices}
+              setConnectedBleDevices={setConnectedBleDevices}
+              setThermometerAdapter={setThermometerAdapter}
+            />
+          </Route>
+          <Route path="/">
+            <DeviceSelector />
+          </Route>
+        </Switch>
+      </Router>
     </div>
   );
 }
