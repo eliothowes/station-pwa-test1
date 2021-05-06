@@ -11,7 +11,7 @@ const ThermometerConsult = ({connectedBleDevices, thermometerAdapter}) => {
   const {path, url} = useRouteMatch();
 
   const [device, setDevice] = React.useState(null);
-  const [data, setData] = React.useState({});
+  // const [data, setData] = React.useState({});
 
 
   React.useEffect(() => {

@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 
 const ThermometerData = ({data, thermometerAdapter}) => {
-  const [patientMessage, setPatientMessage] = React.useState(null)
+  // const [patientMessage, setPatientMessage] = React.useState(null)
 
   React.useEffect(() => {
     const open = () => {
