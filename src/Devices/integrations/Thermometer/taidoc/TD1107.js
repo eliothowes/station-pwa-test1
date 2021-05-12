@@ -178,8 +178,11 @@ export default class TD1107 extends Adapter {
     const year = (timestamp.year.secondValue * 256 + timestamp.year.firstValue).toString();
     const dateTimeValue = `${timestamp.day}, ${timestamp.month} ${year} - ${timestamp.hours}:${timestamp.minutes}:${timestamp.seconds}`
 
-    console.log('Temp: ', temperatureValue, 'Time: ', dateTimeValue)
-    // const data = parseBloodPressureMeasurement(event.target.value);
-    // this._processDataObject(data);
+    const dataObject = {
+      temperature: temperatureValue,
+      timeAndDate: dateTimeValue
+    }
+    this._processDataObject(dataObject);
+    return dataObject
   }
 }
