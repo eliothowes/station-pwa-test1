@@ -1,6 +1,20 @@
 import AbstractBle from '../../../AbstractBle';
 import Adapter from '../../../Adapter';
 
+const monthMapping = {
+  1: 'January',
+  2: 'February',
+  3: 'March',
+  4: 'April',
+  5: 'May',
+  6: 'June',
+  7: 'July',
+  8: 'August',
+  9: 'September',
+  10: 'October',
+  11: 'November',
+  12: 'December',
+}
 
 // Web bluetooth standard: https://webbluetoothcg.github.io/web-bluetooth/
 
@@ -11,24 +25,31 @@ export default class TD1107 extends Adapter {
   static model = 'TD-1107';
   static connectionType = 'ble';
   static connectionProperties = {
-    deviceAddress: 'C0-26-DA-10-C0-26',
+    deviceAddress: '44:02:F7:C3:8A:B1',
     deviceName: 'TAIDOC TD1107',
     services: {
       uuid: '00001523-1212-efde-1523-785feabcd123',
       temperature: {
-        uuid: 0x1809,
-        // uuid: '00001809-0000-1000-8000-00805f9b34fb',
+        uuid: '00001809-0000-1000-8000-00805f9b34fb',
         characteristics: {
           temperatureMeasurement: {
-            uuid: '00002a1c-0000-1000-8000-00805f9b34fb'
-          },
-        },
-        deviceInformation: {
-          uuid: '0000180a-0000-1000-8000-00805f9b34fb',
-          characteristics: {
-            modelNumberString: {
-              uuid: '00002a24-0000-1000-8000-00805f9b34fb'
+            uuid: '00002a1c-0000-1000-8000-00805f9b34fb',
+            descriptors: {
+              clientCharacteristicConfiguration: {
+                uuid: '00002901-0000-1000-8000-00805f9b34fb'
+              }
             }
+          },
+        }
+      },
+      deviceInformation: {
+        uuid: '0000180a-0000-1000-8000-00805f9b34fb',
+        characteristics: {
+          readDeviceClock: {
+            uuid: '00002a23-0000-1000-8000-00805f9b34fb'
+          },
+          modelNumberString: {
+            uuid: '00002a24-0000-1000-8000-00805f9b34fb'
           }
         }
       }
@@ -37,66 +58,51 @@ export default class TD1107 extends Adapter {
 
   constructor () {
     super();
-    this._bufferSize = 1000;
-    this._characteristicListeners = [];
-    this._deviceListeners = [];
-    this._bloodPressureService = null;
-    this._customService = null;
+    this._reading = {}
   }
 
   /**
    * Public methods
    */
 
-
-  open = async () => {
-    super.open();
+  pairDevice () {
     this._ble = new AbstractBle(this.constructor.connectionProperties);
+    return this._ble.pairDevice()
+  }
+
+
+  async open () {
+    super.open();
+
+    if (!this._ble || !this._ble.device) {
+      await this.pairDevice()
+    }
+
+    // Add event listener for gattserverdisconnected
+    // this._ble.addEventListener('gattserverdisconnected', this._onDeviceDisconnected);
 
     try {
-      await this._ble.connectDevice();
+      await this._ble.connect('temperature', 'temperatureMeasurement', 'clientCharacteristicConfiguration')
     }
     catch (error) {
+      console.log('Unable to connect to device')
       this._log(error);
       return;
     }
 
-    // Add event listener for gattserverdisconnected
-    this._ble.addEventListener('gattserverdisconnected', this._onDeviceDisconnected);
+    await this._ble.startCharacteristicNotifications('temperature', 'temperatureMeasurement')
+    await this._ble.onCharacteristicValueChanged('temperature', 'temperatureMeasurement', this.__handleTemperatureMeasurementChanged)
+    const value = await this._ble.readCharacteristicValue('temperature', 'temperatureMeasurement')
 
-    let paired = this._ble._device.gatt.connected;
-    while (!paired) {
-      try {
-        await this._ble.connectGattServer();
-
-        const isPaired = this._ble.isPaired();
-        if (isPaired) {
-          paired = true;
-        }
-      }
-      catch (err) {
-        console.log(err);
-        this._onDeviceDisconnected();
-        return;
-      }
-    }
-
-    // await this._ble.writeCharacteristicValue('bloodPressure', 'dateTime', get7ByteDateTime());
-
-    // Set the custom characteristic value to [2, 1, 3] to disconnect the device - tells the monitor we are ready for readings
-    // await this._ble.writeCharacteristicValue('custom', 'custom', new Uint8Array([2, 1, 3]));
-
-    const deviceModel = await this._ble.getCharacteristicForService('temperature', 'temperatureMeasurement')
-
+    const clientCharacteristicConfigurationValue = await this._ble.readDescriptorValue('temperature', 'temperatureMeasurement', 'clientCharacteristicConfiguration')
     console.log('\x1b[31m\x1b[47m%s\x1b[0m', '<<< Start >>>', '\n');
-    console.log('deviceModelService', deviceModel);
+    console.log(value, 'clientCharacteristicConfigurationValue', clientCharacteristicConfigurationValue);
     console.log('\x1b[0m%s\x1b[32m\x1b[47m%s\x1b[0m', '\n', '<<< Finish >>>', '\n');
-
     this._log('connection opened');
     this._changeStatus('connected');
   }
 
-  async close (targetRevision = this.revision) {
+  close (targetRevision = this.revision) {
     super.close(targetRevision);
 
     // Change the revision will cause any outstanding requests to fail/end
@@ -108,21 +114,71 @@ export default class TD1107 extends Adapter {
   }
 
   _onDeviceDisconnected = async () => {
-    this._log('Bluetooth Device disconnected, reconnecting');
-    try {
-      await this._ble.connectGattServer();
-      console.log('<<< Trying to reconnect >>>')
-      // await this._ble.onCharacteristicValueChanged('bloodPressure', 'bloodPressureMeasurement', this._handleBloodPressureCharacteristicChange);
-      // await this._ble.startCharacteristicNotifications('bloodPressure', 'bloodPressureMeasurement');
-    }
-    catch (err) {
-      this._log('failed to reconnect');
-      await this.close();
-    }
+    // Try and reconnect
+    // return this._ble.connect()
+    // If unable then close the connection
 
+    return this.close();
   }
 
-  _handleBloodPressureCharacteristicChange = (event) => {
+  __handleTemperatureMeasurementChanged = (event) => {
+    // https://stackoverflow.com/questions/54829004/how-to-extract-temperature-decimal-value-from-a-bluetooth-le-sig-hex-value
+    const dataView = event.target.value;
+    const bufferLength = dataView.byteLength;
+
+    const temperatureData = {
+      firstValue: '',
+      secondValue: ''
+    }
+    const timestamp = {
+      year: {
+        firstValue: '',
+        secondValue: ''
+      },
+      month: '',
+      day: '',
+      hours: '',
+      minutes: '',
+      seconds: ''
+    }
+
+    for (let i = 0; i < bufferLength; i++) {
+      const value = dataView.getUint8(i)
+
+      if (i === 1) {
+        temperatureData.firstValue = value;
+      }
+      else if (i === 2) {
+        temperatureData.secondValue = value;
+      }
+      else if (i === 5) {
+        timestamp.year.firstValue = value;
+      }
+      else if (i === 6) {
+        timestamp.year.secondValue = value;
+      }
+      else if (i === 7) {
+        timestamp.month = monthMapping[value];
+      }
+      else if (i === 8) {
+        timestamp.day = value;
+      }
+      else if (i === 9) {
+        timestamp.hours = value;
+      }
+      else if (i === 10) {
+        timestamp.minutes = value;
+      }
+      else if (i === 11) {
+        timestamp.seconds = value;
+      }
+    }
+
+    const temperatureValue = (((256 * temperatureData.secondValue) + temperatureData.firstValue) / 10).toString() + 'degrees celsius'
+    const year = (timestamp.year.secondValue * 256 + timestamp.year.firstValue).toString();
+    const dateTimeValue = `${timestamp.day}, ${timestamp.month} ${year} - ${timestamp.hours}:${timestamp.minutes}:${timestamp.seconds}`
+
+    console.log('Temp: ', temperatureValue, 'Time: ', dateTimeValue)
     // const data = parseBloodPressureMeasurement(event.target.value);
     // this._processDataObject(data);
   }

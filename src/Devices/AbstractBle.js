@@ -1,53 +1,91 @@
 export default class AbstractBle {
-
   constructor (connectionProperties) {
-    this._connectionProperties = connectionProperties;
-    this._device = null;
+    this.connectionProperties = connectionProperties;
+    this.device = null;
+    this.server = null;
+    this._characteristics = new Map();
+    this._descriptors = new Map();
   }
 
-  async connectDevice () {
-    const connectedDevices = await navigator.bluetooth.getDevices();
-    const device = connectedDevices.find(device => device.name === this._connectionProperties.deviceName)
-    if (device) {
-      this._device = device;
-    }
-    else {
-      this._device = await navigator.bluetooth.requestDevice({
-        filters: [
-          {
-            name: this._connectionProperties.deviceName
-          },
-          {
-            services: [
-              this._connectionProperties.services.temperature.uuid,
-              this._connectionProperties.services.deviceInformation.uuid
-            ]
-          }
-        ],
-        optionalServices: [
-          0x1809,
-          '0000180a-0000-1000-8000-00805f9b34fb',
-          '00001523-1212-efde-1523-785feabcd123'
-        ]
-      });
-    }
-    return this._device;
+  pairDevice() {
+    return navigator.bluetooth.getDevices()
+    .then(devices => {
+      const device = devices.find(device => device.name === this.connectionProperties.deviceName)
+      if (device) {
+        this.device = device;
+        return device;
+      }
+      else {
+        navigator.bluetooth.requestDevice({
+          filters: [
+          //   {
+          //     name: this._connectionProperties.deviceName
+          //   },
+            {
+              services: [
+                '0000180a-0000-1000-8000-00805f9b34fb',
+                '00001809-0000-1000-8000-00805f9b34fb'
+              ]
+            }
+          ]
+        })
+        .then(device => {
+          this.device = device;
+          return device;
+        })
+      }
+    })
   }
 
-  async connectGattServer () {
-    if (!this._device) {
-      throw new Error('No device');
-    }
 
-    return this._device.gatt.connect();
+  connect (serviceName, characteristicName, descriptorName) {
+    const serviceDetails = this.connectionProperties.services[serviceName];
+
+    return this.device.gatt.connect()
+    .then(server => {
+      this.server = server;
+      return server.getPrimaryService(serviceDetails.uuid);
+    })
+    .then(service => {
+      return this._cacheCharacteristic(service, serviceDetails.characteristics[characteristicName].uuid);
+    })
+    .then(characteristic => {
+      const descriptorUuid = serviceDetails.characteristics[characteristicName].descriptors[descriptorName].uuid;
+      return this._cacheDescriptor(characteristic, descriptorUuid)
+    })
   }
 
-  isPaired () {
-    if (!this._device) {
-      throw new Error('No device');
-    }
+  getCharacteristic (characteristicUuid) {
+    return this._characteristics.get(characteristicUuid)
+  }
 
-    return this._device.gatt.connected;
+  getDescriptor (descriptorUuid) {
+    return this._descriptors.get(descriptorUuid)
+  }
+
+  _cacheCharacteristic(service, characteristicUuid) {
+    return service.getCharacteristic(characteristicUuid)
+    .then(characteristic => {
+      this._characteristics.set(characteristicUuid, characteristic);
+      return characteristic;
+    });
+  }
+
+  _cacheDescriptor(characteristic, descriptorUuid) {
+    return characteristic.getDescriptors()
+    .then(descriptors => {
+      descriptors.forEach(descriptor => {
+        this._descriptors.set(descriptorUuid, descriptor);
+      })
+    })
+  }
+
+  /**
+   * Get a GATT service
+   * @param {String} server Current connected GATT server
+   */
+  _getPrimaryService (server, serviceUuid) {
+    return server.getPrimaryService(serviceUuid);
   }
 
   /**
@@ -56,7 +94,7 @@ export default class AbstractBle {
    * @param {Func} fn The callback function
    */
   addEventListener (eventName, fn) {
-    this._device.addEventListener(eventName, fn);
+    this.device.addEventListener(eventName, fn);
   }
 
   /**
@@ -65,41 +103,35 @@ export default class AbstractBle {
    * @param {Func} fn The callback function
    */
   removeEventListener (eventName, fn) {
-    this._device.removeEventListener(eventName, fn);
+    this.device.removeEventListener(eventName, fn);
+  }
+
+  async readCharacteristicValue (serviceName, characteristicName) {
+    const characteristicUuid = this.connectionProperties.services[serviceName].characteristics[characteristicName].uuid
+    const characteristic = this.getCharacteristic(characteristicUuid);
+
+    return characteristic.readValue()
+  }
+
+  async readDescriptorValue (serviceName, characteristicName, descriptorName) {
+    const descriptorUuid = this.connectionProperties.services[serviceName].characteristics[characteristicName].descriptors[descriptorName].uuid;
+    const descriptor = this.getDescriptor(descriptorUuid);
+
+    return descriptor.readValue()
   }
 
   async onCharacteristicValueChanged (serviceName, characteristicName, callback) {
-    const characteristic = await this.getCharacteristicForService(serviceName, characteristicName);
+    const characteristicUuid = this.connectionProperties.services[serviceName].characteristics[characteristicName].uuid
+    const characteristic = this.getCharacteristic(characteristicUuid);
+
     characteristic.addEventListener('characteristicvaluechanged', callback);
   }
 
   async startCharacteristicNotifications (serviceName, characteristicName) {
-    const characteristic = await this.getCharacteristicForService(serviceName, characteristicName);
+    const characteristicUuid = this.connectionProperties.services[serviceName].characteristics[characteristicName].uuid
+    const characteristic = this.getCharacteristic(characteristicUuid);
+
     return characteristic.startNotifications();
-  }
-
-  /**
-   * Get a GATT service
-   * @param {String} serviceName The service that is specified in connectionProperties
-   */
-  async getService (serviceName) {
-    console.log('\x1b[31m\x1b[47m%s\x1b[0m', '<<< Start >>>', '\n');
-    console.log('Finding service');
-    console.log('\x1b[0m%s\x1b[32m\x1b[47m%s\x1b[0m', '\n', '<<< Finish >>>', '\n');
-    const service = await this._device.gatt.getPrimaryService(0x1809);
-    console.log('\x1b[31m\x1b[47m%s\x1b[0m', '<<< Start >>>', '\n');
-    console.log(service);
-    console.log('\x1b[0m%s\x1b[32m\x1b[47m%s\x1b[0m', '\n', '<<< Finish >>>', '\n');
-    return this._device.gatt.getPrimaryService(this._connectionProperties.services[serviceName].uuid);
-  }
-
-  /**
-   * Get a GATT characteristic for a particular service
-   * @param {String} serviceName The service that is specified in connectionProperties
-   */
-  async getCharacteristicForService (serviceName, characteristicName) {
-    const service = await this.getService(serviceName);
-    return service.getCharacteristic(this._connectionProperties.services[serviceName].characteristics[characteristicName].uuid);
   }
 
   writeCharacteristicValue = async (serviceName, characteristicName, value) => {

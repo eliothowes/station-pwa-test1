@@ -1,29 +1,34 @@
 import React from 'react';
 import {
-  Link
+  useHistory
 } from "react-router-dom";
 
 const ThermometerData = ({data, thermometerAdapter}) => {
-  // const [patientMessage, setPatientMessage] = React.useState(null)
+  const history = useHistory();
 
   React.useEffect(() => {
     const open = () => {
       return thermometerAdapter.open()
     }
     open()
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const closeAdapter = () => {
+    return thermometerAdapter.close()
+  }
+
+  const handleClick = () => {
+    closeAdapter()
+    history.push('/thermometer/consult')
+  }
 
   return (
   <div>
     <div>
-      <Link to="/pulseoximeter/consult">Stop giving me data</Link>
+      <button onClick={handleClick}>Stop giving me data</button>
     </div>
-    <h3>Patient side</h3>
-    {/* <p>{patientMessage}</p>
-    <p>SP02: {spO2}</p>
-    <p>Pulse: {pulse}</p> */}
+    <h3>Data Output</h3>
   </div>
 );
 };

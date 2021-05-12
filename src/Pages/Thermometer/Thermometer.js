@@ -1,7 +1,7 @@
 import React from 'react';
-import ThermometerLibrary from '../../Devices/integrations/Thermometer';
 import {
-  Link
+  Link,
+  useHistory
 } from "react-router-dom";
 
 const EXPECTED_DEVICES = [
@@ -11,20 +11,17 @@ const EXPECTED_DEVICES = [
   }
 ]
 
-const Thermometer = ({connectedBleDevices, setConnectedBleDevices, setThermometerAdapter}) => {
+const Thermometer = ({connectedBleDevices, setConnectedBleDevices, thermometerAdapter}) => {
   const [expectedDevicesAreConnected, setExpectedDevicesAreConnected] = React.useState(false);
+  const history = useHistory();
 
-  const getDevices = async () => {
+  const getConnectedDevices = async () => {
     const devices = await navigator.bluetooth.getDevices();
-
-    const adapter = await ThermometerLibrary.requestAdapter('taidoc-1107');
-
     setConnectedBleDevices(devices)
-    setThermometerAdapter(adapter)
   }
 
   React.useEffect(() => {
-    getDevices()
+    getConnectedDevices()
       // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -35,8 +32,17 @@ const Thermometer = ({connectedBleDevices, setConnectedBleDevices, setThermomete
   }, [connectedBleDevices])
 
   const requestAccessToUsbDevices = async () => {
-    await navigator.bluetooth.requestDevice({acceptAllDevices: true})
-    getDevices()
+    if (thermometerAdapter) {
+      await thermometerAdapter.pairDevice()
+      history.push('/thermometer')
+    }
+    else {
+      window.alert('No adapter');
+    }
+  }
+
+  const handleClick = () => {
+    return requestAccessToUsbDevices();
   }
 
   const allExpectedDevicesConnected = () => {
@@ -57,7 +63,7 @@ const Thermometer = ({connectedBleDevices, setConnectedBleDevices, setThermomete
       </ul>
       <h1>Thermometer Setup Page</h1>
       {!expectedDevicesAreConnected && (
-        <button onClick={requestAccessToUsbDevices}>Connect Bluetooth Devices</button>
+        <button onClick={handleClick}>Connect Bluetooth Devices</button>
       )}
       <p>Expected Paired Bluetooth Devices: </p>
       <strong>{EXPECTED_DEVICES.map(expectedDevice => JSON.stringify(expectedDevice))}</strong>

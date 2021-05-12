@@ -11,6 +11,7 @@ import {
   Redirect,
   Route,
 } from "react-router-dom";
+import ThermometerLibrary from './Devices/integrations/Thermometer';
 
 const App = () => {
   const deferredPrompt = React.useRef(null);
@@ -21,7 +22,7 @@ const App = () => {
   const [pulseOxAdapter, setPulseOxAdapter] = React.useState({})
 
   const [connectedBleDevices, setConnectedBleDevices] = React.useState([])
-  const [thermometerAdapter, setThermometerAdapter] = React.useState({})
+  const [thermometerAdapter] = React.useState(ThermometerLibrary.requestAdapter('taidoc-1107'))
 
   React.useEffect(() => {
     window.addEventListener('beforeinstallprompt', e => {
@@ -118,7 +119,7 @@ const App = () => {
             <Thermometer
               connectedBleDevices={connectedBleDevices}
               setConnectedBleDevices={setConnectedBleDevices}
-              setThermometerAdapter={setThermometerAdapter}
+              thermometerAdapter={thermometerAdapter}
             />
           </Route>
           <Route path="/">
