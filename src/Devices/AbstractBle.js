@@ -8,33 +8,36 @@ export default class AbstractBle {
   }
 
   pairDevice() {
-    return navigator.bluetooth.getDevices()
-    .then(devices => {
-      const device = devices.find(device => device.name === this.connectionProperties.deviceName)
-      if (device) {
+    // return navigator.bluetooth.getDevices()
+    // .then(devices => {
+    //   const device = devices.find(device => device.name === this.connectionProperties.deviceName)
+    //   if (device) {
+    //     this.device = device;
+    //     return device;
+    //   }
+    // })
+    if (this.device) {
+      return this.device
+    }
+    else {
+      navigator.bluetooth.requestDevice({
+        filters: [
+        //   {
+        //     name: this._connectionProperties.deviceName
+        //   },
+          {
+            services: [
+              '0000180a-0000-1000-8000-00805f9b34fb',
+              '00001809-0000-1000-8000-00805f9b34fb'
+            ]
+          }
+        ]
+      })
+      .then(device => {
         this.device = device;
         return device;
-      }
-      else {
-        navigator.bluetooth.requestDevice({
-          filters: [
-          //   {
-          //     name: this._connectionProperties.deviceName
-          //   },
-            {
-              services: [
-                '0000180a-0000-1000-8000-00805f9b34fb',
-                '00001809-0000-1000-8000-00805f9b34fb'
-              ]
-            }
-          ]
-        })
-        .then(device => {
-          this.device = device;
-          return device;
-        })
-      }
-    })
+      })
+    }
   }
 
 
