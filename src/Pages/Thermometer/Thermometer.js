@@ -1,7 +1,6 @@
 import React from 'react';
 import {
-  Link,
-  useHistory
+  Link
 } from "react-router-dom";
 
 const EXPECTED_DEVICES = [
@@ -13,7 +12,6 @@ const EXPECTED_DEVICES = [
 
 const Thermometer = ({connectedBleDevices, setConnectedBleDevices, thermometerAdapter}) => {
   const [expectedDevicesAreConnected, setExpectedDevicesAreConnected] = React.useState(false);
-  const history = useHistory();
 
   const getConnectedDevices = async () => {
     const devices = await navigator.bluetooth.getDevices();
