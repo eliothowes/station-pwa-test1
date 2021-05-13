@@ -13,15 +13,6 @@ const EXPECTED_DEVICES = [
 const Thermometer = ({connectedBleDevices, setConnectedBleDevices, thermometerAdapter}) => {
   const [expectedDevicesAreConnected, setExpectedDevicesAreConnected] = React.useState(false);
 
-  const getConnectedDevices = async () => {
-    const devices = await navigator.bluetooth.getDevices();
-    setConnectedBleDevices(devices)
-  }
-
-  React.useEffect(() => {
-    getConnectedDevices()
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   React.useEffect(() => {
     const areAllConnected = allExpectedDevicesConnected();
@@ -31,7 +22,8 @@ const Thermometer = ({connectedBleDevices, setConnectedBleDevices, thermometerAd
 
   const requestAccessToUsbDevices = async () => {
     if (thermometerAdapter) {
-      await thermometerAdapter.pairDevice()
+      const device = await thermometerAdapter.pairDevice()
+      setConnectedBleDevices([...connectedBleDevices, device])
     }
     else {
       window.alert('No adapter');
