@@ -34,7 +34,6 @@ const Thermometer = ({connectedBleDevices, setConnectedBleDevices, thermometerAd
   const requestAccessToUsbDevices = async () => {
     if (thermometerAdapter) {
       await thermometerAdapter.pairDevice()
-      history.push('/thermometer')
     }
     else {
       window.alert('No adapter');
