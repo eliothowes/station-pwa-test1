@@ -20,10 +20,12 @@ const Thermometer = ({connectedBleDevices, setConnectedBleDevices, thermometerAd
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectedBleDevices])
 
-  const requestAccessToUsbDevices = async () => {
+  const requestAccessToUsbDevices = () => {
     if (thermometerAdapter) {
-      const device = await thermometerAdapter.pairDevice()
-      setConnectedBleDevices([...connectedBleDevices, device])
+      return thermometerAdapter.pairDevice()
+      .then(device => {
+        return setConnectedBleDevices([...connectedBleDevices, device])
+      })
     }
     else {
       window.alert('No adapter');

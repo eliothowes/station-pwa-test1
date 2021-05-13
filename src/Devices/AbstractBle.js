@@ -17,10 +17,12 @@ export default class AbstractBle {
     //   }
     // })
     if (this.device) {
-      return this.device
+      return new Promise((resolve) => {
+        resolve(this.device);
+      });
     }
     else {
-      navigator.bluetooth.requestDevice({
+      return navigator.bluetooth.requestDevice({
         filters: [
         //   {
         //     name: this._connectionProperties.deviceName
