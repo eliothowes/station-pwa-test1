@@ -7,23 +7,10 @@ import {
 } from "react-router-dom";
 import ThermometerData from './ThermometerData'
 
-const ThermometerConsult = ({connectedBleDevices, thermometerAdapter}) => {
+const ThermometerConsult = ({connectedThermometer, thermometerAdapter}) => {
   const {path, url} = useRouteMatch();
 
-  const [device, setDevice] = React.useState(null);
   const [data] = React.useState({});
-
-
-  React.useEffect(() => {
-    const device = getDevice('TAIDOC TD1107')
-    setDevice(device)
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const getDevice = (deviceIdentifier) => {
-    return connectedBleDevices.find(device => device.name === deviceIdentifier)
-  }
 
   return (
     <div>
@@ -33,7 +20,7 @@ const ThermometerConsult = ({connectedBleDevices, thermometerAdapter}) => {
       </ul>
       <div style={{marginTop: '3em'}}>
         <h1>Thermometer Consult Page</h1>
-        <p>Thermometer: {device && `${device.name}`}</p>
+        <p>Thermometer: {connectedThermometer && `${connectedThermometer.name}`}</p>
       </div>
       <div style={{marginTop: '3em'}}>
       <Switch>

@@ -21,7 +21,7 @@ const App = () => {
   const [connectedUsbDevices, setConnectedUsbDevices] = React.useState([])
   const [pulseOxAdapter, setPulseOxAdapter] = React.useState({})
 
-  const [connectedBleDevices, setConnectedBleDevices] = React.useState([])
+  const [connectedThermometer, setConnectedThermometer] = React.useState(null)
   const [thermometerAdapter] = React.useState(ThermometerLibrary.requestAdapter('taidoc-1107'))
 
   React.useEffect(() => {
@@ -111,14 +111,14 @@ const App = () => {
           </Route>
           <Route path="/thermometer/consult">
             <ThermometerConsult
-              connectedBleDevices={connectedBleDevices}
+              connectedThermometer={connectedThermometer}
               thermometerAdapter={thermometerAdapter}
             />
           </Route>
           <Route path="/thermometer">
             <Thermometer
-              connectedBleDevices={connectedBleDevices}
-              setConnectedBleDevices={setConnectedBleDevices}
+              connectedThermometer={connectedThermometer}
+              setConnectedThermometer={setConnectedThermometer}
               thermometerAdapter={thermometerAdapter}
             />
           </Route>

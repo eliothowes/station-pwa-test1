@@ -10,7 +10,7 @@ const EXPECTED_DEVICES = [
   }
 ]
 
-const Thermometer = ({connectedBleDevices, setConnectedBleDevices, thermometerAdapter}) => {
+const Thermometer = ({connectedThermometer, setConnectedThermometer, thermometerAdapter}) => {
   const [expectedDevicesAreConnected, setExpectedDevicesAreConnected] = React.useState(false);
 
 
@@ -18,13 +18,13 @@ const Thermometer = ({connectedBleDevices, setConnectedBleDevices, thermometerAd
     const areAllConnected = allExpectedDevicesConnected();
     setExpectedDevicesAreConnected(areAllConnected)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectedBleDevices])
+  }, [connectedThermometer])
 
   const requestAccessToUsbDevices = () => {
     if (thermometerAdapter) {
       return thermometerAdapter.pairDevice()
       .then(device => {
-        return setConnectedBleDevices([...connectedBleDevices, device])
+        return setConnectedThermometer(device)
       })
     }
     else {
@@ -37,14 +37,7 @@ const Thermometer = ({connectedBleDevices, setConnectedBleDevices, thermometerAd
   }
 
   const allExpectedDevicesConnected = () => {
-    if (connectedBleDevices.length < EXPECTED_DEVICES.length) {
-      return EXPECTED_DEVICES.every(expectedDevice => {
-        return connectedBleDevices.find(device => device.vendorId === expectedDevice.vendorId && device.productId === expectedDevice.productId)
-      })
-    }
-    else {
-      return true;
-    }
+    return connectedThermometer ? true : false;
   }
 
   return (
@@ -60,15 +53,13 @@ const Thermometer = ({connectedBleDevices, setConnectedBleDevices, thermometerAd
       <strong>{EXPECTED_DEVICES.map(expectedDevice => JSON.stringify(expectedDevice))}</strong>
       <p>Paired USB Devices: </p>
       <p>
-        {connectedBleDevices.map((connectedDevice, idx) => {
-          return (
-            <>
-            <strong>{`id: ${connectedDevice.id}`}</strong><br/>
-            <strong>{`name: ${connectedDevice.name}`}</strong><br/>
-            <strong>{`Connected: ${connectedDevice.gatt.connected ? 'Yes' : 'No'}`}</strong>
-            </>
-          )
-        })}
+        {connectedThermometer && (
+          <div>
+            <strong>{`id: ${connectedThermometer.id}`}</strong><br/>
+            <strong>{`name: ${connectedThermometer.name}`}</strong><br/>
+            <strong>{`Connected: ${connectedThermometer.gatt.connected ? 'Yes' : 'No'}`}</strong>
+          </div>
+        )}
       </p>
       {expectedDevicesAreConnected && (
         <Link to="/thermometer/consult">Consult</Link>
