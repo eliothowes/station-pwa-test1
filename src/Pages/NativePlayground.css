@@ -1,5 +1,7 @@
 .buttons-container {
-  width: 50%;
-  display: flex;
-  justify-content: space-around;
+  width: 100%;
+}
+
+.buttons-container button + button {
+  margin-left: 1em;
 }
