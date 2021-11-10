@@ -1,28 +1,17 @@
 import React from 'react';
-import './App.css';
-import DeviceSelector from './Pages/DeviceSelector'
-import PulseOximeter from './Pages/PulseOximeter/PulseOximeter'
-import PulseOxConsult from './Pages/PulseOximeter/PulseOxConsult'
-import Thermometer from './Pages/Thermometer/Thermometer'
-import ThermometerConsult from './Pages/Thermometer/ThermometerConsult'
 import {
   BrowserRouter as Router,
-  Switch,
-  Redirect,
+  Link,
   Route,
+  Switch,
 } from "react-router-dom";
-import ThermometerLibrary from './Devices/integrations/Thermometer';
+import WebPlayground from './Pages/WebPlayground';
+import NativePlayground from './Pages/NativePlayground';
 
 const App = () => {
   const deferredPrompt = React.useRef(null);
   const [isInstalled, setIsInstalled] = React.useState(false);
   const [showInstall, setShowInstall] = React.useState(false);
-
-  const [connectedUsbDevices, setConnectedUsbDevices] = React.useState([])
-  const [pulseOxAdapter, setPulseOxAdapter] = React.useState({})
-
-  const [connectedThermometer, setConnectedThermometer] = React.useState(null)
-  const [thermometerAdapter] = React.useState(ThermometerLibrary.requestAdapter('taidoc-1107'))
 
   React.useEffect(() => {
     window.addEventListener('beforeinstallprompt', e => {
@@ -61,25 +50,8 @@ const App = () => {
     setShowInstall(false)
   }
 
-  function ConditionalRoute({ children, ...rest }) {
-    return (
-      <Route
-        {...rest}
-        render={() =>
-          connectedUsbDevices.length > 0 ? (
-            children
-          ) : (
-            <Redirect
-              to={{pathname: "/",}}
-            />
-          )
-        }
-      />
-    );
-  }
-
   return (
-    <div className="App">
+    <div style={{padding: '1em'}}>
       <div>
         {showInstall && (
           <div className="install-banner">
@@ -95,36 +67,23 @@ const App = () => {
         )}
       </div>
       <Router>
+        <Route exact path="/">
+          <Link to="/native">
+            Native Playground
+          </Link>
+          <div style={{display: 'inline', marginLeft: '1em'}}>
+            <Link to="/web">
+              Web Playground
+            </Link>
+          </div>
+        </Route>
         <Switch>
-          <ConditionalRoute path="/pulseoximeter/consult">
-            <PulseOxConsult
-              connectedUsbDevices={connectedUsbDevices}
-              pulseOxAdapter={pulseOxAdapter}
-            />
-          </ConditionalRoute>
-          <Route path="/pulseoximeter">
-            <PulseOximeter
-              connectedUsbDevices={connectedUsbDevices}
-              setConnectedUsbDevices={setConnectedUsbDevices}
-              setPulseOxAdapter={setPulseOxAdapter}
-            />
-          </Route>
-          <Route path="/thermometer/consult">
-            <ThermometerConsult
-              connectedThermometer={connectedThermometer}
-              thermometerAdapter={thermometerAdapter}
-            />
-          </Route>
-          <Route path="/thermometer">
-            <Thermometer
-              connectedThermometer={connectedThermometer}
-              setConnectedThermometer={setConnectedThermometer}
-              thermometerAdapter={thermometerAdapter}
-            />
-          </Route>
-          <Route path="/">
-            <DeviceSelector />
-          </Route>
+        <Route path="/native">
+          <NativePlayground />
+        </Route>
+        <Route path="/web">
+          <WebPlayground />
+        </Route>
         </Switch>
       </Router>
     </div>

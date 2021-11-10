@@ -20,7 +20,7 @@ const monthMapping = {
 
 export default class TD1107 extends Adapter {
   // Required by Device class
-  static id = 'taidoc-1107';
+  static id = 'taidoc-td1107-ble';
   static vendor = 'TAIDOC';
   static model = 'TD-1107';
   static connectionType = 'ble';

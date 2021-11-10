@@ -11,6 +11,7 @@ export default class AbstractBle {
     // return navigator.bluetooth.getDevices()
     // .then(devices => {
     //   const device = devices.find(device => device.name === this.connectionProperties.deviceName)
+
     //   if (device) {
     //     this.device = device;
     //     return device;
@@ -24,9 +25,9 @@ export default class AbstractBle {
     else {
       return navigator.bluetooth.requestDevice({
         filters: [
-        //   {
-        //     name: this._connectionProperties.deviceName
-        //   },
+          {
+            name: this._connectionProperties.deviceName
+          },
           {
             services: [
               '0000180a-0000-1000-8000-00805f9b34fb',
