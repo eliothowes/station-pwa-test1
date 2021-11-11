@@ -15,7 +15,7 @@ const NativePlayground = () => {
   const handleScanResult = (data) => {
     window.removeEventListener('scanResult', handleScanResult)
 
-    console.log('Received data: ', data);
+    console.log('Received data: ', data.detail);
 
     setBleScanResult(data);
   }
