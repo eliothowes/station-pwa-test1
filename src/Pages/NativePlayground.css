@@ -3,5 +3,14 @@
 }
 
 .buttons-container button + button {
-  margin-left: 1em;
+  margin-left: 8px;
+}
+
+.rpc-output {
+  padding: 8px;
+  border: 1px solid black;
+}
+
+mt {
+  margin-top: 8px;
 }
