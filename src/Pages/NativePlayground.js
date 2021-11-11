@@ -25,7 +25,7 @@ const NativePlayground = () => {
     if ('flutter_inappwebview' in window) {
       window.addEventListener('scanResult', handleScanResult)
 
-      return window.flutter_inappwebview.callHandler('startScan', {device: deviceIdentifier});
+      return window.flutter_inappwebview.callHandler('startScan');
     }
 
     console.log(
