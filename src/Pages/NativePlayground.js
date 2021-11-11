@@ -25,7 +25,7 @@ const NativePlayground = () => {
     if ('flutter_inappwebview' in window) {
       window.addEventListener('scanResult', handleScanResult)
 
-      return window.flutter_inappwebview.callHandler('startScan', {deviceIdentifier});
+      return window.flutter_inappwebview.callHandler('startScan', {device: deviceIdentifier});
     }
 
     console.log(
@@ -51,7 +51,7 @@ const NativePlayground = () => {
     if ('flutter_inappwebview' in window) {
       window.addEventListener('connectedDevice', handleConnectDevice)
 
-      return window.flutter_inappwebview.callHandler('connectDevice', {deviceIdentifier});
+      return window.flutter_inappwebview.callHandler('connectDevice', {device: deviceIdentifier});
     }
 
     console.log(
@@ -77,7 +77,7 @@ const NativePlayground = () => {
     if ('flutter_inappwebview' in window) {
       window.addEventListener('manufacturerInfo', handleManufacturerInfo)
 
-      return window.flutter_inappwebview.callHandler('manufacturerInfo', {deviceIdentifier});
+      return window.flutter_inappwebview.callHandler('manufacturerInfo', {device: deviceIdentifier});
     }
 
     console.log(
@@ -103,7 +103,7 @@ const NativePlayground = () => {
     if ('flutter_inappwebview' in window) {
       window.addEventListener('readMeasurement', handleDeviceReading)
 
-      return window.flutter_inappwebview.callHandler('readMeasurement', {deviceIdentifier});
+      return window.flutter_inappwebview.callHandler('readMeasurement', {device: deviceIdentifier});
     }
 
     console.log(
@@ -129,10 +129,7 @@ const NativePlayground = () => {
     if ('flutter_inappwebview' in window) {
       window.addEventListener('readMeasurement', handleCloseDevice)
 
-      return window.flutter_inappwebview.callHandler(
-        'closeDevice',
-        {device: deviceIdentifier}
-      );
+      return window.flutter_inappwebview.callHandler('closeDevice', {device: deviceIdentifier});
     }
 
     console.log(
