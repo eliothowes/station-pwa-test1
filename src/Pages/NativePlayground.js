@@ -22,7 +22,7 @@ const NativePlayground = () => {
 
   const startScan = async (deviceIdentifier) => {
     // Should be able to use window.isMobileWebView = true
-    if ('flutter_inappwebview' in window) {
+    if (window.isMobileWebView) {
       window.addEventListener('scanResult', handleScanResult)
 
       return window.flutter_inappwebview.callHandler('startScan');
@@ -48,7 +48,7 @@ const NativePlayground = () => {
   }
 
   const connectDevice = async (deviceIdentifier) => {
-    if ('flutter_inappwebview' in window) {
+    if (window.isMobileWebView) {
       window.addEventListener('connectedDevice', handleConnectDevice)
 
       return window.flutter_inappwebview.callHandler('connectDevice', {device: deviceIdentifier});
@@ -74,7 +74,7 @@ const NativePlayground = () => {
   }
 
   const getManufacturerInfo = async (deviceIdentifier) => {
-    if ('flutter_inappwebview' in window) {
+    if (window.isMobileWebView) {
       window.addEventListener('manufacturerInfo', handleManufacturerInfo)
 
       return window.flutter_inappwebview.callHandler('manufacturerInfo', {device: deviceIdentifier});
@@ -100,7 +100,7 @@ const NativePlayground = () => {
   }
 
   const getDeviceReading = async (deviceIdentifier) => {
-    if ('flutter_inappwebview' in window) {
+    if (window.isMobileWebView) {
       window.addEventListener('readMeasurement', handleDeviceReading)
 
       return window.flutter_inappwebview.callHandler('readMeasurement', {device: deviceIdentifier});
@@ -126,7 +126,7 @@ const NativePlayground = () => {
   }
 
   const closeDevice = async (deviceIdentifier) => {
-    if ('flutter_inappwebview' in window) {
+    if (window.isMobileWebView) {
       window.addEventListener('readMeasurement', handleCloseDevice)
 
       return window.flutter_inappwebview.callHandler('closeDevice', {device: deviceIdentifier});
