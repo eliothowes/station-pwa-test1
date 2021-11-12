@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import * as ble from './utils/ble';
 import './NativePlayground.css'
 
 const NativePlayground = () => {
@@ -20,12 +21,11 @@ const NativePlayground = () => {
     setBleScanResult(data.detail);
   }
 
-  const startScan = async (deviceIdentifier) => {
-    // Should be able to use window.isMobileWebView = true
+  const startScan = async () => {
     if (window.isMobileWebView) {
       window.addEventListener('scanResult', handleScanResult)
 
-      return window.flutter_inappwebview.callHandler('startScan');
+      ble.startScan();
     }
 
     console.log(
