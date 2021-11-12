@@ -15,9 +15,9 @@ const NativePlayground = () => {
   const handleScanResult = (data) => {
     window.removeEventListener('scanResult', handleScanResult)
 
-    console.log('Received data: ', data.detail);
+    console.log('Received data: ', data);
 
-    setBleScanResult(data);
+    setBleScanResult(data.detail);
   }
 
   const startScan = async (deviceIdentifier) => {
@@ -44,7 +44,7 @@ const NativePlayground = () => {
 
     console.log('Received data: ', data);
 
-    setDeviceConnection(data);
+    setDeviceConnection(data.detail);
   }
 
   const connectDevice = async (deviceIdentifier) => {
@@ -70,7 +70,7 @@ const NativePlayground = () => {
 
     console.log('Received data: ', data);
 
-    setManufacturerInfo(data);
+    setManufacturerInfo(data.detail);
   }
 
   const getManufacturerInfo = async (deviceIdentifier) => {
@@ -96,7 +96,7 @@ const NativePlayground = () => {
 
     console.log('Received data: ', data);
 
-    setDeviceReading(data);
+    setDeviceReading(data.detail);
   }
 
   const getDeviceReading = async (deviceIdentifier) => {
@@ -122,7 +122,7 @@ const NativePlayground = () => {
 
     console.log('Received data: ', data);
 
-    setCloseDeviceResult(data);
+    setCloseDeviceResult(data.detail);
   }
 
   const closeDevice = async (deviceIdentifier) => {
