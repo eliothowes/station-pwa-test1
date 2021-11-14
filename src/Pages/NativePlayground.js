@@ -12,16 +12,19 @@ const NativePlayground = () => {
   const [rpcResponse, setRpcResponse] = useState();
   const [postMessage, setPostMessage] = useState();
 
-  useEffect(() => {
-    window.addEventListener("message", (event) => {
-      setPostMessage({
-        source: event.source,
-        data: event.data,
-        origin: event.origin
-      })
-    }, false);
+  const handlePostMessage = (event) => {
+    const eventDetails = {
+      data: event.data,
+      origin: event.origin
+    }
+    console.warn('Herrow', eventDetails)
+    setPostMessage(eventDetails)
+  }
 
-    return () => window.removeEventListener("message")
+  useEffect(() => {
+    window.addEventListener("message", handlePostMessage);
+
+    return () => window.removeEventListener("message", handlePostMessage)
   }, [])
 
   /**
