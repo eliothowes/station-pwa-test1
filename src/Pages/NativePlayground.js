@@ -9,6 +9,8 @@ const NativePlayground = () => {
   const [deviceReading, setDeviceReading] = useState();
   const [closeDeviceResult, setCloseDeviceResult] = useState();
 
+  const [rpcResponse, setRpcResponse] = useState();
+
   /**
    *
    * BLE Scan
@@ -17,6 +19,8 @@ const NativePlayground = () => {
     window.removeEventListener('scanResult', handleScanResult)
 
     console.log('Received data: ', data);
+
+    setRpcResponse(JSON.stringify(data))
 
     setBleScanResult(data.detail);
   }
@@ -165,35 +169,42 @@ const NativePlayground = () => {
         {bleScanResult && (
           <div className="rpc-output">
             <h4>BLE Scan Result</h4>
-            <pre>{JSON.stringify(bleScanResult)}</pre>
+            <pre>{JSON.stringify(bleScanResult, null, 2)}</pre>
           </div>
         )}
         {deviceConnection && (
           <div className="rpc-output mt">
             <h4>Device Connection Result</h4>
-            <pre>{JSON.stringify(deviceConnection)}</pre>
+            <pre>{JSON.stringify(deviceConnection, null, 2)}</pre>
           </div>
         )}
         {manufacturerInfo && (
           <div className="rpc-output mt">
             <h4>Manufacturer Info Result</h4>
-            <pre>{JSON.stringify(manufacturerInfo)}</pre>
+            <pre>{JSON.stringify(manufacturerInfo, null, 2)}</pre>
           </div>
         )}
         {deviceReading && (
           <div className="rpc-output mt">
             <h4>Device Reading</h4>
-            <pre>{JSON.stringify(deviceReading)}</pre>
+            <pre>{JSON.stringify(deviceReading, null, 2)}</pre>
           </div>
         )}
         {closeDeviceResult && (
           <div className="rpc-output mt">
             <h4>Device Closed Result</h4>
-            <pre>{JSON.stringify(closeDeviceResult)}</pre>
+            <pre>{JSON.stringify(closeDeviceResult, null, 2)}</pre>
           </div>
         )}
-        {!bleScanResult && !deviceConnection && !manufacturerInfo && !deviceReading && !closeDeviceResult }
-        <pre>.....</pre>
+        {rpcResponse && (
+          <div className="rpc-output mt">
+            <h6>RPC Response</h6>
+            <pre>{JSON.stringify(rpcResponse, null, 2)}</pre>
+          </div>
+        )}
+        {(!bleScanResult || !deviceConnection || !manufacturerInfo || !deviceReading || !closeDeviceResult) && (
+          <pre>.....</pre>
+        )}
       </div>
     </div>
   );
