@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import * as ble from './utils/ble';
 import './NativePlayground.css'
 
@@ -10,6 +10,19 @@ const NativePlayground = () => {
   const [closeDeviceResult, setCloseDeviceResult] = useState();
 
   const [rpcResponse, setRpcResponse] = useState();
+  const [postMessage, setPostMessage] = useState();
+
+  useEffect(() => {
+    window.addEventListener("message", (event) => {
+      setPostMessage({
+        source: event.source,
+        data: event.data,
+        origin: event.origin
+      })
+    }, false);
+
+    return () => window.removeEventListener("message")
+  }, [])
 
   /**
    *
@@ -194,6 +207,12 @@ const NativePlayground = () => {
           <div className="rpc-output mt">
             <h4>Device Closed Result</h4>
             <pre>{JSON.stringify(closeDeviceResult, null, 2)}</pre>
+          </div>
+        )}
+        {postMessage && (
+          <div className="rpc-output mt">
+            <h6>POST MESSAGE Response</h6>
+            <pre>{JSON.stringify(postMessage, null, 2)}</pre>
           </div>
         )}
         {rpcResponse && (
