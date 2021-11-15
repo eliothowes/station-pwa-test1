@@ -18,9 +18,14 @@ const NativePlayground = () => {
 
     const {messageType, value} = event.data;
 
+    setRpcResponse(event.data)
+
     switch (messageType) {
       case "scanResult":
         setBleScanResult(value)
+        break;
+      case "connectedDevice":
+        setDeviceConnection(value)
         break;
       default:
         setRpcResponse(event.data)
@@ -37,21 +42,9 @@ const NativePlayground = () => {
    *
    * BLE Scan
    */
-  const handleScanResult = (data) => {
-    window.removeEventListener('scanResult', handleScanResult)
-
-    console.log('Received data: ', data);
-
-    setRpcResponse(JSON.stringify(data))
-
-    setBleScanResult(data.detail);
-  }
-
   const startScan = async () => {
     if (window.isMobileWebView) {
-      window.addEventListener('scanResult', handleScanResult)
-
-      ble.startScan();
+      return ble.startScan();
     }
 
     console.log(
@@ -65,19 +58,9 @@ const NativePlayground = () => {
    *
    * Connect Device
    */
-  const handleConnectDevice = (data) => {
-    window.removeEventListener('connectedDevice', handleConnectDevice)
-
-    console.log('Received data: ', data);
-
-    setDeviceConnection(data.detail);
-  }
-
   const connectDevice = async (deviceIdentifier) => {
     if (window.isMobileWebView) {
-      window.addEventListener('connectedDevice', handleConnectDevice)
-
-      return window.flutter_inappwebview.callHandler('connectDevice', {device: deviceIdentifier});
+      return ble.connectDevice(deviceIdentifier);
     }
 
     console.log(

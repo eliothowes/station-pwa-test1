@@ -11,6 +11,10 @@
   border: 1px solid black;
 }
 
+.rpc-output pre {
+  overflow: auto;
+}
+
 mt {
   margin-top: 8px;
 }
