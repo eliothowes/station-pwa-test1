@@ -10,15 +10,21 @@ const NativePlayground = () => {
   const [closeDeviceResult, setCloseDeviceResult] = useState();
 
   const [rpcResponse, setRpcResponse] = useState();
-  const [postMessage, setPostMessage] = useState();
 
   const handlePostMessage = (event) => {
-    const eventDetails = {
-      data: event.data,
-      origin: event.origin
+    if (event.origin !== "https://dreamy-khorana-b8a419.netlify.app") {
+      return;
     }
-    console.warn('Herrow', eventDetails)
-    setPostMessage(eventDetails)
+
+    const {messageType, value} = event.data;
+
+    switch (messageType) {
+      case "scanResult":
+        setBleScanResult(value)
+        break;
+      default:
+        setRpcResponse(event.data)
+    }
   }
 
   useEffect(() => {
@@ -210,12 +216,6 @@ const NativePlayground = () => {
           <div className="rpc-output mt">
             <h4>Device Closed Result</h4>
             <pre>{JSON.stringify(closeDeviceResult, null, 2)}</pre>
-          </div>
-        )}
-        {postMessage && (
-          <div className="rpc-output mt">
-            <h6>POST MESSAGE Response</h6>
-            <pre>{JSON.stringify(postMessage, null, 2)}</pre>
           </div>
         )}
         {rpcResponse && (
