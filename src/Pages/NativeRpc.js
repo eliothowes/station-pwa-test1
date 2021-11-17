@@ -25,8 +25,8 @@ class NativeRpc {
       const rpcTimeout = setTimeout(() => {
         window.removeEventListener('message', returnHandler);
         reject(new Error(`Timeout calling function: ${message.type}`));
-      }, 3 * 1000);
-
+      }, 5 * 1000);
+      window.alert('timeout set')
       const returnHandler = (event) => {
         const {data: message} = event.data;
         window.alert(event.data)
