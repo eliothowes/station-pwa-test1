@@ -1,23 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import nativeRpc from './NativeRpc';
 import './NativePlayground.css'
 
 const NativePlayground = () => {
   const [td1241Data, setTd1241Data] = useState();
-
   const [rpcResponse, setRpcResponse] = useState();
-
-  const handlePostMessage = (event) => {
-    if (event.origin !== "https://dreamy-khorana-b8a419.netlify.app") {
-      return;
-    }
-  }
-
-  useEffect(() => {
-    window.addEventListener("message", handlePostMessage);
-
-    return () => window.removeEventListener("message", handlePostMessage)
-  }, [])
 
   /**
    *
