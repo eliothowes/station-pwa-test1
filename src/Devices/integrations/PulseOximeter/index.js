@@ -1,5 +1,5 @@
 import Device from '../../Device';
-import adapters from './nonin';
+import adapters from './adapters';
 
 class PulseOximeter extends Device {
   constructor (adapters) {

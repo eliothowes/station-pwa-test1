@@ -1,9 +1,16 @@
 .buttons-container {
   width: 100%;
+  display: flex;
+  height: 40px;
 }
 
 .buttons-container button + button {
   margin-left: 8px;
+}
+
+.buttons-divider {
+  border-right: 3px solid black;
+  margin: 0 1em;
 }
 
 .rpc-output {
@@ -13,6 +20,10 @@
 
 .rpc-output pre {
   overflow: auto;
+}
+
+.device-output {
+  height: 140px;
 }
 
 mt {

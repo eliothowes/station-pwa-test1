@@ -1,7 +1,7 @@
-import AbstractUsb from '../../../AbstractUsb';
+import AbstractUsb from '../../../../AbstractUsb';
 import parseInputMessage from './parse_input_message';
-import {appendBuffer} from '../../../util';
-import Adapter from '../../../Adapter';
+import {appendBuffer} from '../../../../util';
+import Adapter from '../../../../Adapter';
 
 
 /**
