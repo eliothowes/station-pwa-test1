@@ -23,13 +23,18 @@ class NativeRpc {
     return new Promise((resolve, reject) => {
       // If the native app hasn't responded in 3 secs then timeout
       const rpcTimeout = setTimeout(() => {
+        window.alert('timeout reached - destroying listener')
         window.removeEventListener('message', returnHandler);
         reject(new Error(`Timeout calling function: ${message.type}`));
       }, 5 * 1000);
+
       window.alert('timeout set')
+
       const returnHandler = (event) => {
         const {data: message} = event.data;
-        window.alert(event.data)
+
+        window.alert(`Got Data ${JSON.stringify(event.data)}`)
+
         if (this._rpcSuccessful(message, messageId, 'deviceAndMeasurementResult')) {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
