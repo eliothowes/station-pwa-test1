@@ -70,27 +70,25 @@ class NativeRpc {
       }, 3 * 1000);
 
       const returnHandler = (event) => {
-        const {data: message} = event.data;
+        const message = event.data;
 
-        if (this._rpcSuccessful(message, messageId, 'deviceClosed')) {
-          resolve(message.response);
+        if (this._rpcSuccessful(message, 'deviceClosed', messageId)) {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
+          resolve(message.data.response);
         }
 
-        reject(new Error(message.error));
         clearTimeout(rpcTimeout);
         window.removeEventListener('message', returnHandler);
+        reject(new Error(message.data.error));
       };
 
       window.addEventListener('message', returnHandler);
 
       if ('flutter_inappwebview' in window) {
-        return window.flutter_inappwebview.callHandler(message.type, message);
-      }
-
-      if ('ReactNativeWebView' in window) {
-        return window.ReactNativeWebView.postMessage(message)
+        window.flutter_inappwebview.callHandler(message.type, message);
+      } else if ('ReactNativeWebView' in window) {
+        window.ReactNativeWebView.postMessage(message)
       }
     });
   }

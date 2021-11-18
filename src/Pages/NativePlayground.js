@@ -18,11 +18,6 @@ const NativePlayground = () => {
   // const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble')
   const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble')
 
-  React.useEffect(() => {
-    window.addEventListener('message', (data) => {
-      window.alert(`received post message ${data.origin}`)
-    })
-  })
   /**
    *
    * BLE Scan
@@ -50,11 +45,13 @@ const NativePlayground = () => {
    */
   const closeDevice = async (deviceIdentifier) => {
     if (window.isMobileWebView) {
-      const deviceReading = await nativeRpc.closeDevice(deviceIdentifier);
+      return nativeRpc.closeDevice(deviceIdentifier)
+      .then(result => {
+        console.log(JSON.stringify(result))
+        setRpcResponse(result)
+        setTd1241Data(result)
+      })
 
-      console.log(deviceReading)
-      setRpcResponse(deviceReading)
-      setTd1241Data(deviceReading)
     }
 
     console.log(
