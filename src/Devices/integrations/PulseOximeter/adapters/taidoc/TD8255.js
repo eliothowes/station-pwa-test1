@@ -41,7 +41,7 @@ export default class TD8255 extends Adapter {
     }
 
     try {
-      return nativeRpc.getDeviceAndMeasurement(TD8255.id)
+      nativeRpc.getDeviceAndMeasurement(TD8255.id)
       .then(response => {
         window.alert(`Proccess data array, ${JSON.stringify(response)}`)
         this._processDataArray(response)
