@@ -29,7 +29,7 @@ const NativePlayground = () => {
    */
   const getDeviceAndMeasurement = async (deviceIdentifier) => {
     if (window.isMobileWebView) {
-      nativeRpc.getDeviceAndMeasurement(deviceIdentifier)
+      return nativeRpc.getDeviceAndMeasurement(deviceIdentifier)
       .then(result => window.alert(`Here is the result post await ${result}`))
 
       // console.log(deviceReading)

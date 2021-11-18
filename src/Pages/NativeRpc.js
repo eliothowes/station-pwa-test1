@@ -58,11 +58,9 @@ class NativeRpc {
       window.addEventListener('message', returnHandler);
 
       if ('flutter_inappwebview' in window) {
-        return window.flutter_inappwebview.callHandler('getDeviceAndMeasurement', message);
-      }
-
-      if ('ReactNativeWebView' in window) {
-        return window.ReactNativeWebView.postMessage(message)
+        window.flutter_inappwebview.callHandler('getDeviceAndMeasurement', message);
+      } else if ('ReactNativeWebView' in window) {
+        window.ReactNativeWebView.postMessage(message)
       }
     });
   }
