@@ -30,7 +30,7 @@ const NativePlayground = () => {
   const getDeviceAndMeasurement = async (deviceIdentifier) => {
     if (window.isMobileWebView) {
       const deviceReading = await nativeRpc.getDeviceAndMeasurement(deviceIdentifier);
-
+      window.alert(JSON.stringify(deviceReading))
       console.log(deviceReading)
       setRpcResponse(deviceReading)
       setTd1241Data(deviceReading)
