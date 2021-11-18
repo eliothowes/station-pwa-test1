@@ -15,7 +15,7 @@ export default class TD8255 extends Adapter {
 
   async open () {
     super.open();
-
+    window.alert('OPEN')
     // Start receiving data
     this._receiveLoop(this.revision);
 
@@ -33,6 +33,7 @@ export default class TD8255 extends Adapter {
   }
 
   _receiveLoop = async (revision) => {
+    window.alert('_receiveLoop')
     // If the revision get's bumped then exit
     if (revision !== this.revision) {
       console.log('This connection is no longer live');
@@ -40,6 +41,7 @@ export default class TD8255 extends Adapter {
     }
 
     try {
+      window.alert(`try ${TD8255.id}`)
       nativeRpc.getDeviceAndMeasurement(TD8255.id)
       .then(response => this._processDataArray(response));
     }

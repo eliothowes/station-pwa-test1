@@ -77,6 +77,7 @@ const NativePlayground = () => {
   const handleClosePulseOximeter = () => {
     setPulseOximeterReadings([])
     return pulseOximeterAdapter.close()
+    .then(() => setPulseOximeterReadings([]))
   }
 
   /**
