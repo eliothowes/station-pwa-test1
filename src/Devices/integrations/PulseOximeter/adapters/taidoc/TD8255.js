@@ -41,9 +41,11 @@ export default class TD8255 extends Adapter {
     }
 
     try {
-      window.alert(`try ${TD8255.id}`)
       return nativeRpc.getDeviceAndMeasurement(TD8255.id)
-      .then(response => this._processDataArray(response));
+      .then(response => {
+        window.alert(`Proccess data array, ${JSON.stringify(response)}`)
+        this._processDataArray(response)
+      });
     }
     catch (err) {
       console.error('Caught error:', err);
