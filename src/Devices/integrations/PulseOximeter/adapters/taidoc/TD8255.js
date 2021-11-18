@@ -40,12 +40,12 @@ export default class TD8255 extends Adapter {
     }
 
     try {
-      const bleResponse = await nativeRpc.getDeviceAndMeasurement(TD8255.id);
-      this._processDataArray(bleResponse);
+      nativeRpc.getDeviceAndMeasurement(TD8255.id)
+      .then(response => this._processDataArray(response));
     }
     catch (err) {
       console.error('Caught error:', err);
-      await this.close();
+      this.close();
     }
 
     // Exited above
@@ -54,7 +54,7 @@ export default class TD8255 extends Adapter {
     });
   }
 
-  async close (targetRevision = this.revision) {
+  close (targetRevision = this.revision) {
     super.close(targetRevision);
 
     // Change the revision will cause any outstanding requests to fail/end
@@ -62,8 +62,9 @@ export default class TD8255 extends Adapter {
 
     this._changeStatus('disconnected');
 
-    await nativeRpc.closeDevice();
-
-    this._log('closed');
+    return nativeRpc.closeDevice()
+    .then(() => {
+      this._log('closed');
+    });
   }
 }

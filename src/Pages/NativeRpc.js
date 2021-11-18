@@ -25,7 +25,7 @@ class NativeRpc {
       const rpcTimeout = setTimeout(() => {
         window.removeEventListener('message', returnHandler);
         reject(new Error(`Timeout calling function: ${message.type}`));
-      }, 15 * 1000);
+      }, 10 * 1000);
 
       const returnHandler = (event) => {
         const message = event.data;
@@ -67,11 +67,11 @@ class NativeRpc {
       const rpcTimeout = setTimeout(() => {
         window.removeEventListener('message', returnHandler);
         reject(new Error(`Timeout calling function: ${message.type}`));
-      }, 3 * 1000);
+      }, 10 * 1000);
 
       const returnHandler = (event) => {
         const message = event.data;
-
+        window.alert(`Return handler ${JSON.stringify(message)}`)
         if (this._rpcSuccessful(message, 'deviceClosed', messageId)) {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
