@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import nativeRpc from './NativeRpc';
-import ThermometerLibrary from '../Devices/integrations/Thermometer';
+// import ThermometerLibrary from '../Devices/integrations/Thermometer';
 import PulseOximeterLibrary from '../Devices/integrations/PulseOximeter';
 import BloodPressureLibrary from '../Devices/integrations/BloodPressure';
 import './NativePlayground.css'
@@ -9,12 +9,13 @@ const NativePlayground = () => {
   const [td1241Data, setTd1241Data] = useState();
   const [rpcResponse, setRpcResponse] = useState();
 
-  const [thermometerReadings, setThermometerReadings] = useState([]);
+  const [thermometerReadings] = useState([]);
+  // const [thermometerReadings, setThermometerReadings] = useState([]);
   const [bloodPressureReadings, setBloodPressureReadings] = useState([]);
   const [pulseOximeterReadings, setPulseOximeterReadings] = useState([]);
 
   const pulseOximeterAdapter = PulseOximeterLibrary.requestAdapter('taidoc-td8255-ble');
-  const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble')
+  // const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble')
   const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble')
 
   /**
