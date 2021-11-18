@@ -26,7 +26,7 @@ class NativeRpc {
         window.alert('timeout reached - destroying listener')
         window.removeEventListener('message', returnHandler);
         reject(new Error(`Timeout calling function: ${message.type}`));
-      }, 5 * 1000);
+      }, 10 * 1000);
 
       window.alert('timeout set')
 
@@ -46,6 +46,9 @@ class NativeRpc {
         }
       };
 
+      window.addEventListener('message', () => {
+        window.alert('Got something back from postMessage')
+      });
       window.addEventListener('message', returnHandler);
 
       if ('flutter_inappwebview' in window) {
