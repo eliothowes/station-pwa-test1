@@ -18,6 +18,11 @@ const NativePlayground = () => {
   // const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble')
   const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble')
 
+  React.useEffect(() => {
+    window.addEventListener('message', (data) => {
+      window.alert(`received post message ${data.origin}`)
+    })
+  })
   /**
    *
    * BLE Scan

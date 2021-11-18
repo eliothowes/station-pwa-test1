@@ -46,8 +46,8 @@ class NativeRpc {
         }
       };
 
-      window.addEventListener('message', () => {
-        window.alert('Got something back from postMessage')
+      window.addEventListener('message', (event) => {
+        window.alert(`Got something back from postMessage ${JSON.stringify(event.data.response)} ${JSON.stringify(event.data.error)}`)
       });
       window.addEventListener('message', returnHandler);
 
