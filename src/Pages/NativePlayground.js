@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import nativeRpc from './NativeRpc';
 import ThermometerLibrary from '../Devices/integrations/Thermometer';
 import PulseOximeterLibrary from '../Devices/integrations/PulseOximeter';
+import BloodPressureLibrary from '../Devices/integrations/BloodPressure';
 import './NativePlayground.css'
 
 const NativePlayground = () => {
@@ -9,10 +10,12 @@ const NativePlayground = () => {
   const [rpcResponse, setRpcResponse] = useState();
 
   const [thermometerReadings, setThermometerReadings] = useState([]);
+  const [bloodPressureReadings, setBloodPressureReadings] = useState([]);
   const [pulseOximeterReadings, setPulseOximeterReadings] = useState([]);
 
   const pulseOximeterAdapter = PulseOximeterLibrary.requestAdapter('taidoc-td8255-ble');
   const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble')
+  const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble')
 
   /**
    *
@@ -55,7 +58,7 @@ const NativePlayground = () => {
   }
 
   /**
-   * PULSE OXIMETER
+   * Pulse Oximeter
    */
 
   const handlePulseOximeterData = (data) => {
@@ -82,7 +85,7 @@ const NativePlayground = () => {
 
   const handleOpenThermometer = () => {
     thermometerAdapter.on('data', handleThermometerData)
-    return thermometerAdapter.open()
+    return bloodPressureAdapter.open()
   }
 
   const handleCloseThermometer = () => {
@@ -90,6 +93,23 @@ const NativePlayground = () => {
     return thermometerAdapter.close()
   }
 
+  /**
+   * Blood Pressure
+   */
+
+   const handleBloodPressureData = (data) => {
+    setBloodPressureReadings(currentReadings => [...currentReadings, data])
+  }
+
+  const handleOpenBloodPressure = () => {
+    bloodPressureAdapter.on('data', handleBloodPressureData)
+    return bloodPressureAdapter.open()
+  }
+
+  const handleCloseBloodPressure = () => {
+    setBloodPressureReadings([])
+    return bloodPressureAdapter.close()
+  }
 
   return (
     <div>
@@ -131,7 +151,7 @@ const NativePlayground = () => {
       <div className="device-output">
         {td1241Data && (
           <div className="rpc-output mt">
-            <h4>Device Reading</h4>
+            <h4>Device Reading (not using device library)</h4>
             <pre>{JSON.stringify(td1241Data, null, 2)}</pre>
           </div>
         )}
@@ -146,6 +166,28 @@ const NativePlayground = () => {
       </div>
 
       <hr />
+
+      <h3>Blood Pressure Controls</h3>
+      <div className="buttons-container">
+        <button onClick={() => getDeviceAndMeasurement('taidoc-td3128-ble')}>
+          Connect to TD-3128 and get reading
+        </button>
+        <button onClick={() => closeDevice('taidoc-td3128-ble')}>
+          Close TD-3128
+        </button>
+      </div>
+      <h3>Blood Pressure Output</h3>
+      <div className="device-output">
+        {bloodPressureReadings.map(reading => {
+          return (
+            <div key={JSON.stringify(reading)}>
+              <p>{`${reading.systolic} / ${reading.diastolic} ${reading.units}`}</p>
+              <p>{reading.pulse}</p>
+              <p>{reading.timestamp}</p>
+            </div>
+          )
+        })}
+      </div>
 
 
       <h5>Raw rpc output</h5>
