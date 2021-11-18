@@ -4,9 +4,9 @@ class NativeRpc {
   }
 
   _rpcSuccessful (rpcMessage, messageType, currentMessageId) {
-    const {type, messageId, response} = rpcMessage;
+    const {type, messageId, data} = rpcMessage;
 
-    return response.ok && type === messageType && messageId === currentMessageId
+    return data.ok && type === messageType && messageId === currentMessageId
   }
 
   getDeviceAndMeasurement (deviceIdentifier) {
