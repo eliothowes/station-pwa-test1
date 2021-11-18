@@ -33,7 +33,7 @@ class NativeRpc {
       const returnHandler = (event) => {
         const message = event.data;
         window.alert(`RPC returned ${JSON.stringify(event.data)} Original message Id ${messageId}`)
-        if (this._rpcSuccessful(message, messageId, 'deviceAndMeasurementResult')) {
+        if (this._rpcSuccessful(message, 'deviceAndMeasurementResult', messageId)) {
           window.alert(`RPC Success ${JSON.stringify(event.data)}`)
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
