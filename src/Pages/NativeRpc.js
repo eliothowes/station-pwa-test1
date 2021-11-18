@@ -25,13 +25,12 @@ class NativeRpc {
       const rpcTimeout = setTimeout(() => {
         window.removeEventListener('message', returnHandler);
         reject(new Error(`Timeout calling function: ${message.type}`));
-      }, 10 * 1000);
+      }, 15 * 1000);
 
       const returnHandler = (event) => {
         const message = event.data;
 
         if (this._rpcSuccessful(message, 'deviceAndMeasurementResult', messageId)) {
-          window.alert(`Something here: ${JSON.stringify(message)}`)
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
           resolve(message.data.response);
@@ -41,6 +40,8 @@ class NativeRpc {
           reject(new Error(message.data.error));
         }
       };
+
+      window.addEventListener('message', returnHandler);
 
       if ('flutter_inappwebview' in window) {
         window.flutter_inappwebview.callHandler('getDeviceAndMeasurement', message);

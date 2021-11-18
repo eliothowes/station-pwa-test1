@@ -31,7 +31,6 @@ const NativePlayground = () => {
     if (window.isMobileWebView) {
       return nativeRpc.getDeviceAndMeasurement(deviceIdentifier)
       .then(result => {
-        window.alert(JSON.stringify(result))
         console.log(JSON.stringify(result))
         setRpcResponse(result)
         setTd1241Data(result)
