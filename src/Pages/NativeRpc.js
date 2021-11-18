@@ -23,38 +23,23 @@ class NativeRpc {
     return new Promise((resolve, reject) => {
       // If the native app hasn't responded in 3 secs then timeout
       const rpcTimeout = setTimeout(() => {
-        window.alert('timeout reached - destroying listener')
         window.removeEventListener('message', returnHandler);
         reject(new Error(`Timeout calling function: ${message.type}`));
       }, 10 * 1000);
 
-      window.alert('timeout set')
-
       const returnHandler = (event) => {
         const message = event.data;
-
-        window.alert(`RPC returned ${JSON.stringify(event.data)} Original message Id ${messageId}`)
 
         if (this._rpcSuccessful(message, 'deviceAndMeasurementResult', messageId)) {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
-
-          window.alert(`RPC Success ${JSON.stringify(message.data.response)}`)
           resolve(message.data.response);
         } else {
-
-          window.alert(`RPC Failed ${JSON.stringify(event.data)}`)
-
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
           reject(new Error(message.data.error));
         }
       };
-
-      window.addEventListener('message', (event) => {
-        window.alert(`Got something back from postMessage ${JSON.stringify(event.data.response)} ${JSON.stringify(event.data.error)}`)
-      });
-      window.addEventListener('message', returnHandler);
 
       if ('flutter_inappwebview' in window) {
         window.flutter_inappwebview.callHandler('getDeviceAndMeasurement', message);
