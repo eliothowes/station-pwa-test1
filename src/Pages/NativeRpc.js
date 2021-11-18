@@ -33,13 +33,13 @@ class NativeRpc {
       const returnHandler = (event) => {
         const {data: message} = event.data;
 
-        window.alert(`Got Data ${JSON.stringify(event.data)}`)
-
         if (this._rpcSuccessful(message, messageId, 'deviceAndMeasurementResult')) {
+          window.alert(`RPC Success ${JSON.stringify(event.data)}`)
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
           resolve(message.response);
         } else {
+          window.alert(`RPC Failed ${JSON.stringify(event.data)}`)
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
           reject(new Error(message.error));
