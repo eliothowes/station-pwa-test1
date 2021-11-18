@@ -39,15 +39,15 @@ class NativeRpc {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
 
-          window.alert(`RPC Success ${JSON.stringify(message.response)}`)
-          resolve(message.response);
+          window.alert(`RPC Success ${JSON.stringify(message.data.response)}`)
+          resolve(message.data.response);
         } else {
 
           window.alert(`RPC Failed ${JSON.stringify(event.data)}`)
 
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
-          reject(new Error(message.error));
+          reject(new Error(message.data.error));
         }
       };
 
