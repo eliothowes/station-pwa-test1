@@ -31,6 +31,7 @@ class NativeRpc {
         const message = event.data;
 
         if (this._rpcSuccessful(message, 'deviceAndMeasurementResult', messageId)) {
+          window.alert(`Something here: ${JSON.stringify(message)}`)
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
           resolve(message.data.response);
