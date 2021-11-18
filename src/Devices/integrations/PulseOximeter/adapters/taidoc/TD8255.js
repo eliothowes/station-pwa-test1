@@ -13,9 +13,14 @@ export default class TD8255 extends Adapter {
     services: {}
   };
 
+  constructor () {
+    super();
+    this.data = [];
+  }
+
   async open () {
     super.open();
-    window.alert('OPEN')
+
     // Start receiving data
     this._receiveLoop(this.revision);
 
@@ -32,7 +37,7 @@ export default class TD8255 extends Adapter {
     this._changeStatus('connected');
   }
 
-  _receiveLoop = async (revision) => {
+  _receiveLoop = (revision) => {
     window.alert('_receiveLoop')
     // If the revision get's bumped then exit
     if (revision !== this.revision) {
@@ -44,6 +49,7 @@ export default class TD8255 extends Adapter {
       nativeRpc.getDeviceAndMeasurement(TD8255.id)
       .then(response => {
         window.alert(`Proccess data array, ${JSON.stringify(response)}`)
+        this.data = [...this.data, response]
         this._processDataArray(response)
       });
     }
