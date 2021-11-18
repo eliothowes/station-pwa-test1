@@ -4,9 +4,9 @@ class NativeRpc {
   }
 
   _rpcSuccessful (rpcMessage, messageType, currentMessageId) {
-    const {ok, type, messageId} = rpcMessage;
+    const {type, messageId, response} = rpcMessage;
 
-    return ok && type === messageType && messageId === currentMessageId
+    return response.ok && type === messageType && messageId === currentMessageId
   }
 
   getDeviceAndMeasurement (deviceIdentifier) {
@@ -32,14 +32,20 @@ class NativeRpc {
 
       const returnHandler = (event) => {
         const message = event.data;
+
         window.alert(`RPC returned ${JSON.stringify(event.data)} Original message Id ${messageId}`)
+
         if (this._rpcSuccessful(message, 'deviceAndMeasurementResult', messageId)) {
+
           window.alert(`RPC Success ${JSON.stringify(event.data)}`)
+
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
           resolve(message.response);
         } else {
+
           window.alert(`RPC Failed ${JSON.stringify(event.data)}`)
+
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
           reject(new Error(message.error));
