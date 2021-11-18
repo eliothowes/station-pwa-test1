@@ -79,19 +79,19 @@ const NativePlayground = () => {
    * Thermometer
    */
 
-  const handleThermometerData = (data) => {
-    setThermometerReadings(currentReadings => [...currentReadings, data])
-  }
+  // const handleThermometerData = (data) => {
+  //   setThermometerReadings(currentReadings => [...currentReadings, data])
+  // }
 
-  const handleOpenThermometer = () => {
-    thermometerAdapter.on('data', handleThermometerData)
-    return bloodPressureAdapter.open()
-  }
+  // const handleOpenThermometer = () => {
+  //   thermometerAdapter.on('data', handleThermometerData)
+  //   return bloodPressureAdapter.open()
+  // }
 
-  const handleCloseThermometer = () => {
-    setThermometerReadings([])
-    return thermometerAdapter.close()
-  }
+  // const handleCloseThermometer = () => {
+  //   setThermometerReadings([])
+  //   return thermometerAdapter.close()
+  // }
 
   /**
    * Blood Pressure
@@ -169,10 +169,10 @@ const NativePlayground = () => {
 
       <h3>Blood Pressure Controls</h3>
       <div className="buttons-container">
-        <button onClick={() => getDeviceAndMeasurement('taidoc-td3128-ble')}>
+        <button onClick={handleOpenBloodPressure}>
           Connect to TD-3128 and get reading
         </button>
-        <button onClick={() => closeDevice('taidoc-td3128-ble')}>
+        <button onClick={handleCloseBloodPressure}>
           Close TD-3128
         </button>
       </div>
