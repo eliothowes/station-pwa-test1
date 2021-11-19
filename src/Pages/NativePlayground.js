@@ -26,7 +26,8 @@ const NativePlayground = () => {
     if (window.isMobileWebView) {
       return nativeRpc.getDeviceAndMeasurement(deviceIdentifier)
       .then(result => {
-        console.log(JSON.stringify(result))
+        console.warn(`Here in result land: ${JSON.stringify(result)}`)
+        console.log(result)
         setRpcResponse(result)
         setTd1241Data(result)
       })
@@ -48,8 +49,13 @@ const NativePlayground = () => {
       return nativeRpc.closeDevice(deviceIdentifier)
       .then(result => {
         console.log(JSON.stringify(result))
-        setRpcResponse(result)
-        setTd1241Data(result)
+        setRpcResponse()
+        setTd1241Data([])
+      })
+      .catch(error => {
+        console.error(error)
+        setRpcResponse(error)
+        setTd1241Data(error)
       })
 
     }
@@ -65,20 +71,20 @@ const NativePlayground = () => {
    * Pulse Oximeter
    */
 
-  const handlePulseOximeterData = (data) => {
-    setPulseOximeterReadings(currentReadings => [...currentReadings, data])
-  }
+  // const handlePulseOximeterData = (data) => {
+  //   setPulseOximeterReadings(currentReadings => [...currentReadings, data])
+  // }
 
-  const handleOpenPulseOximeter = () => {
-    pulseOximeterAdapter.on('data', handlePulseOximeterData)
-    return pulseOximeterAdapter.open()
-  }
+  // const handleOpenPulseOximeter = () => {
+  //   pulseOximeterAdapter.on('data', handlePulseOximeterData)
+  //   return pulseOximeterAdapter.open()
+  // }
 
-  const handleClosePulseOximeter = () => {
-    setPulseOximeterReadings([])
-    return pulseOximeterAdapter.close()
-    .then(() => setPulseOximeterReadings([]))
-  }
+  // const handleClosePulseOximeter = () => {
+  //   setPulseOximeterReadings([])
+  //   return pulseOximeterAdapter.close()
+  //   .then(() => setPulseOximeterReadings([]))
+  // }
 
   /**
    * Thermometer
@@ -120,10 +126,12 @@ const NativePlayground = () => {
     <div>
       <h3>Pulse Oximeter Controls</h3>
       <div className="buttons-container">
-        <button onClick={handleOpenPulseOximeter}>
+        {/* <button onClick={handleOpenPulseOximeter}> */}
+        <button onClick={() => getDeviceAndMeasurement('taidoc-td8255-ble')}>
           Connect to TD-8255 and get readings
         </button>
-        <button onClick={handleClosePulseOximeter}>
+        {/* <button onClick={handleClosePulseOximeter}> */}
+        <button onClick={() => closeDevice('taidoc-td8255-ble')}>
           Close TD-8255
         </button>
       </div>

@@ -21,7 +21,7 @@ class NativeRpc {
     }
 
     return new Promise((resolve, reject) => {
-      // If the native app hasn't responded in 3 secs then timeout
+      // If the native app hasn't responded in 10 secs then timeout
       const rpcTimeout = setTimeout(() => {
         window.removeEventListener('message', returnHandler);
         reject(new Error(`Timeout calling function: ${message.type}`));
