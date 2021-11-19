@@ -29,6 +29,7 @@ class NativeRpc {
       }, 10 * 1000);
 
       const returnHandler = (event) => {
+        window.alert('returnHandler')
         const message = event.data;
         window.alert(`getDeviceAndMeasurement ${JSON.stringify(message)}`)
         if (this._rpcSuccessful(message, 'deviceAndMeasurementResult', messageId)) {
