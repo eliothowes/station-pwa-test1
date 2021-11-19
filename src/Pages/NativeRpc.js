@@ -23,6 +23,7 @@ class NativeRpc {
     return new Promise((resolve, reject) => {
       // If the native app hasn't responded in 10 secs then timeout
       const rpcTimeout = setTimeout(() => {
+        window.alert('timeout reach - destroying listener')
         window.removeEventListener('message', returnHandler);
         reject(new Error(`Timeout calling function: ${message.type}`));
       }, 10 * 1000);
@@ -44,6 +45,7 @@ class NativeRpc {
       window.addEventListener('message', returnHandler);
 
       if ('flutter_inappwebview' in window) {
+        window.alert('sending getDeviceAndMeasurement')
         window.flutter_inappwebview.callHandler('getDeviceAndMeasurement', message);
       } else if ('ReactNativeWebView' in window) {
         window.ReactNativeWebView.postMessage(message)
