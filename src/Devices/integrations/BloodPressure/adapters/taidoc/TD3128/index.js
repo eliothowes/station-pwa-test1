@@ -19,6 +19,7 @@ export default class TD3128 extends Adapter {
     this._log('waiting for device connection');
 
     try {
+      window.alert(`Open try: ${TD3128.id}`)
       const bleResponse = await nativeRpc.getDeviceAndMeasurement(TD3128.id);
       this._processDataObject(bleResponse);
     }
