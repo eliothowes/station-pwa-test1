@@ -6,15 +6,11 @@ import nativeRpc from './NativeRpc';
 import './NativePlayground.css'
 
 const NativePlayground = () => {
-  const [td1241Data, setTd1241Data] = useState();
   const [rpcResponse, setRpcResponse] = useState();
 
-  const [thermometerReadings] = useState([]);
-  // const [thermometerReadings, setThermometerReadings] = useState([]);
-  const [bloodPressureReadings] = useState([]);
-  // const [bloodPressureReadings, setBloodPressureReadings] = useState([]);
-  const [pulseOximeterReadings] = useState([]);
-  // const [pulseOximeterReadings, setPulseOximeterReadings] = useState([]);
+  const [thermometerReadings, setThermometerReadings] = useState([]);
+  const [bloodPressureReadings, setBloodPressureReadings] = useState([]);
+  const [pulseOximeterReadings, setPulseOximeterReadings] = useState([]);
 
   // const pulseOximeterAdapter = PulseOximeterLibrary.requestAdapter('taidoc-td8255-ble');
   // const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble')
@@ -24,14 +20,14 @@ const NativePlayground = () => {
    *
    * BLE Scan
    */
-  const getDeviceAndMeasurement = async (deviceIdentifier) => {
+  const getDeviceAndMeasurement = async (deviceIdentifier, setData) => {
     if (window.isMobileWebView) {
       return nativeRpc.getDeviceAndMeasurement(deviceIdentifier)
       .then(result => {
         console.warn(`Here in result land: ${JSON.stringify(result)}`)
         console.log(result)
         setRpcResponse(result)
-        setTd1241Data(result)
+        setData(result)
       })
     }
 
@@ -46,18 +42,18 @@ const NativePlayground = () => {
    *
    * Close Device
    */
-  const closeDevice = async (deviceIdentifier) => {
+  const closeDevice = async (deviceIdentifier, setData) => {
     if (window.isMobileWebView) {
       return nativeRpc.closeDevice(deviceIdentifier)
       .then(result => {
         console.log(JSON.stringify(result))
         setRpcResponse()
-        setTd1241Data([])
+        setData([])
       })
       .catch(error => {
         console.error(error)
         setRpcResponse(error)
-        setTd1241Data(error)
+        setData(error)
       })
 
     }
@@ -129,11 +125,11 @@ const NativePlayground = () => {
       <h3>Pulse Oximeter Controls</h3>
       <div className="buttons-container">
         {/* <button onClick={handleOpenPulseOximeter}> */}
-        <button onClick={() => getDeviceAndMeasurement('taidoc-td8255-ble')}>
+        <button onClick={() => getDeviceAndMeasurement('taidoc-td8255-ble', setPulseOximeterReadings)}>
           Connect to TD-8255 and get readings
         </button>
         {/* <button onClick={handleClosePulseOximeter}> */}
-        <button onClick={() => closeDevice('taidoc-td8255-ble')}>
+        <button onClick={() => closeDevice('taidoc-td8255-ble', setPulseOximeterReadings)}>
           Close TD-8255
         </button>
       </div>
@@ -155,21 +151,15 @@ const NativePlayground = () => {
 
       <h3>Thermometer Controls</h3>
       <div className="buttons-container">
-        <button onClick={() => getDeviceAndMeasurement('taidoc-td1241-ble')}>
+        <button onClick={() => getDeviceAndMeasurement('taidoc-td1241-ble', setThermometerReadings)}>
           Connect to TD-1241 and get reading
         </button>
-        <button onClick={() => closeDevice('taidoc-td1241-ble')}>
+        <button onClick={() => closeDevice('taidoc-td1241-ble', setThermometerReadings)}>
           Close TD-1241
         </button>
       </div>
       <h3>Thermometer Output</h3>
       <div className="device-output">
-        {td1241Data && (
-          <div className="rpc-output mt">
-            <h4>Device Reading (not using device library)</h4>
-            <pre>{JSON.stringify(td1241Data, null, 2)}</pre>
-          </div>
-        )}
         {thermometerReadings.map(reading => {
           return (
             <div key={JSON.stringify(reading)}>
@@ -185,11 +175,11 @@ const NativePlayground = () => {
       <h3>Blood Pressure Controls</h3>
       <div className="buttons-container">
         {/* <button onClick={handleOpenBloodPressure}> */}
-        <button onClick={() => getDeviceAndMeasurement('taidoc-td3128-ble')}>
+        <button onClick={() => getDeviceAndMeasurement('taidoc-td3128-ble', setBloodPressureReadings)}>
           Connect to TD-3128 and get reading
         </button>
         {/* <button onClick={handleCloseBloodPressure}> */}
-        <button onClick={() => closeDevice('taidoc-td3128-ble')}>
+        <button onClick={() => closeDevice('taidoc-td3128-ble', setBloodPressureReadings)}>
           Close TD-3128
         </button>
       </div>
