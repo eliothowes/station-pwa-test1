@@ -27,7 +27,7 @@ const NativePlayground = () => {
         console.warn(`Here in result land: ${JSON.stringify(result)}`)
         console.log(result)
         setRpcResponse(result)
-        setData(result)
+        setData(currentResults => [result, ...currentResults])
       })
     }
 
@@ -53,7 +53,7 @@ const NativePlayground = () => {
       .catch(error => {
         console.error(error)
         setRpcResponse(error)
-        setData(error)
+        setData([error])
       })
 
     }
