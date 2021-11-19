@@ -138,7 +138,6 @@ export default class Adapter extends EventEmitter {
    * @param {Object[]} dataArray Array of arbitrary data objects
    */
   _processDataArray (dataArray) {
-
     this.data = this.data.concat(dataArray).slice(-this._dataBufferSize);
     dataArray.forEach(packet => this.emit('data', packet));
     this.numberOfPacketsReceived += dataArray.length;
