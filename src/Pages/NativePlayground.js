@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import nativeRpc from './NativeRpc';
 // import ThermometerLibrary from '../Devices/integrations/Thermometer';
 // import PulseOximeterLibrary from '../Devices/integrations/PulseOximeter';
-import BloodPressureLibrary from '../Devices/integrations/BloodPressure';
+// import BloodPressureLibrary from '../Devices/integrations/BloodPressure';
 import './NativePlayground.css'
 
 const NativePlayground = () => {
@@ -11,13 +11,14 @@ const NativePlayground = () => {
 
   const [thermometerReadings] = useState([]);
   // const [thermometerReadings, setThermometerReadings] = useState([]);
-  const [bloodPressureReadings, setBloodPressureReadings] = useState([]);
+  const [bloodPressureReadings] = useState([]);
+  // const [bloodPressureReadings, setBloodPressureReadings] = useState([]);
   const [pulseOximeterReadings] = useState([]);
   // const [pulseOximeterReadings, setPulseOximeterReadings] = useState([]);
 
   // const pulseOximeterAdapter = PulseOximeterLibrary.requestAdapter('taidoc-td8255-ble');
   // const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble')
-  const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble')
+  // const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble')
 
   /**
    *
@@ -109,19 +110,19 @@ const NativePlayground = () => {
    * Blood Pressure
    */
 
-   const handleBloodPressureData = (data) => {
-    setBloodPressureReadings(currentReadings => [...currentReadings, data])
-  }
+  //  const handleBloodPressureData = (data) => {
+  //   setBloodPressureReadings(currentReadings => [...currentReadings, data])
+  // }
 
-  const handleOpenBloodPressure = () => {
-    bloodPressureAdapter.on('data', handleBloodPressureData)
-    return bloodPressureAdapter.open()
-  }
+  // const handleOpenBloodPressure = () => {
+  //   bloodPressureAdapter.on('data', handleBloodPressureData)
+  //   return bloodPressureAdapter.open()
+  // }
 
-  const handleCloseBloodPressure = () => {
-    setBloodPressureReadings([])
-    return bloodPressureAdapter.close()
-  }
+  // const handleCloseBloodPressure = () => {
+  //   setBloodPressureReadings([])
+  //   return bloodPressureAdapter.close()
+  // }
 
   return (
     <div>
@@ -183,10 +184,12 @@ const NativePlayground = () => {
 
       <h3>Blood Pressure Controls</h3>
       <div className="buttons-container">
-        <button onClick={handleOpenBloodPressure}>
+        {/* <button onClick={handleOpenBloodPressure}> */}
+        <button onClick={() => getDeviceAndMeasurement('taidoc-td3128-ble')}>
           Connect to TD-3128 and get reading
         </button>
-        <button onClick={handleCloseBloodPressure}>
+        {/* <button onClick={handleCloseBloodPressure}> */}
+        <button onClick={() => closeDevice('taidoc-td3128-ble')}>
           Close TD-3128
         </button>
       </div>

@@ -40,7 +40,7 @@ export default class TD3128 extends Adapter {
 
     this._changeStatus('disconnected');
 
-    await nativeRpc.closeDevice();
+    await nativeRpc.closeDevice(TD3128.id);
 
     this._log('closed');
   }
