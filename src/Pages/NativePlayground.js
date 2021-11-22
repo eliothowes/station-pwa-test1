@@ -14,7 +14,7 @@ const NativePlayground = () => {
   const [thermometerStatus, setThermometerStatus] = useState([]);
 
   const [bloodPressureReadings, setBloodPressureReadings] = useState([]);
-  const [bloodPressureStatus, setBoodPressureStatus] = useState([]);
+  const [bloodPressureStatus, setBloodPressureStatus] = useState([]);
 
   // const pulseOximeterAdapter = PulseOximeterLibrary.requestAdapter('taidoc-td8255-ble');
   const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble');
@@ -120,7 +120,7 @@ const NativePlayground = () => {
   }
 
   const handleBloodPressureChangeEvent = () => {
-    setThermometerStatus(thermometerAdapter.status);
+    setBloodPressureStatus(bloodPressureAdapter.status);
   }
 
   const handleOpenBloodPressure = () => {
@@ -198,6 +198,7 @@ const NativePlayground = () => {
         </button>
       </div>
       <h3>Blood Pressure Output</h3>
+      <p>Status: {bloodPressureStatus}</p>
       <div className="device-output">
         {bloodPressureReadings.map(reading => {
           return (
