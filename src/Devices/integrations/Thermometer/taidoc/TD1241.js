@@ -18,18 +18,18 @@ export default class TD1241 extends Adapter {
 
     this._log('waiting for device connection');
 
-    try {
-      const bleResponse = await nativeRpc.getDeviceAndMeasurement(TD1241.id);
-      this._processDataObject(bleResponse);
-
+    return nativeRpc.getDeviceAndMeasurement(TD1241.id)
+    .then(response => {
       this._log('connection opened');
       this._changeStatus('connected');
-    }
-    catch (error) {
+
+      this._processDataObject(response);
+    })
+    .catch(error => {
       console.error('Error opening device:', JSON.stringify(error));
-      this._emitError(error)
-      await this.close();
-    }
+      this._emitError(error);
+      this.close();
+    });
   }
 
   async close (targetRevision = this.revision) {
@@ -38,15 +38,15 @@ export default class TD1241 extends Adapter {
     // Change the revision will cause any outstanding requests to fail/end
     this.revision += 1;
 
-    try {
-      await nativeRpc.closeDevice(TD1241.id);
+    return nativeRpc.closeDevice(TD1241.id)
+    .then(() => {
       this._changeStatus('disconnected');
       this._log('closed');
-    }
-    catch (error) {
+    })
+    .catch(error => {
       console.error('Error closing device', JSON.stringify(error));
       this._emitError(error)
       // await this.close(); // SHOULD WE TRY AGAIN IF IT FAILS TO CLOSE
-    }
+    });
   }
 }
