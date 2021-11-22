@@ -46,7 +46,7 @@ export default class TD3128 extends Adapter {
     catch (error) {
       console.error('Error closing device', JSON.stringify(error));
       this._emitError(error)
-      await this.close();
+      // await this.close(); // SHOULD WE TRY AGAIN IF IT FAILS TO CLOSE
     }
   }
 }
