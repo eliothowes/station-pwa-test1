@@ -99,7 +99,8 @@ const NativePlayground = () => {
     setThermometerStatus(thermometerAdapter.status);
   }
   const handleThermometerError = (error) => {
-    window.alert(JSON.stringify(error));
+    console.error('IN ERROR HANDLER: ', error)
+    window.alert(error);
   }
 
   const handleOpenThermometer = () => {
@@ -126,13 +127,14 @@ const NativePlayground = () => {
     setBloodPressureStatus(bloodPressureAdapter.status);
   }
   const handleBloodPressureError = (error) => {
-    window.alert(JSON.stringify(error));
+    console.error('IN ERROR HANDLER: ', error)
+    window.alert(error);
   }
 
   const handleOpenBloodPressure = () => {
     bloodPressureAdapter.on('data', handleBloodPressureData);
     bloodPressureAdapter.on('change', handleBloodPressureChangeEvent);
-    bloodPressureAdapter.on('change', handleBloodPressureError);
+    bloodPressureAdapter.on('error', handleBloodPressureError);
 
     return bloodPressureAdapter.open();
   }

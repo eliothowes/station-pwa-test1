@@ -44,7 +44,7 @@ export default class TD1241 extends Adapter {
       this._log('closed');
     })
     .catch(error => {
-      console.error('Error closing device', JSON.stringify(error));
+      console.error('Error closing device', error);
       this._emitError(error)
       // await this.close(); // SHOULD WE TRY AGAIN IF IT FAILS TO CLOSE
     });
