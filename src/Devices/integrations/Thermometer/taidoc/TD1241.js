@@ -26,7 +26,7 @@ export default class TD1241 extends Adapter {
       this._processDataObject(response);
     })
     .catch(error => {
-      console.error('Error opening device:', JSON.stringify(error));
+      console.error('Error opening device', error);
       this._emitError(error);
       this.close();
     });

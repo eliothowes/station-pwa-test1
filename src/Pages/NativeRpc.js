@@ -12,7 +12,7 @@ class NativeRpc {
   getDeviceAndMeasurement (deviceIdentifier) {
     const messageId = this._messageId++
 
-    const message = {
+    const requestMessage = {
       type: 'getDeviceAndMeasurement',
       messageId,
       data: {
@@ -23,31 +23,30 @@ class NativeRpc {
     return new Promise((resolve, reject) => {
       // If the native app hasn't responded in 10 secs then timeout
       const rpcTimeout = setTimeout(() => {
-        console.warn('timeout reach - destroying listener');
         window.removeEventListener('message', returnHandler);
-        reject(new Error(`Timeout calling function: ${message.type}`));
+        reject(new Error(`Timeout calling function: ${requestMessage.type}`));
       }, 10 * 1000);
 
       const returnHandler = (event) => {
-        const message = event.data;
-        window.alert(`getDeviceAndMeasurement Message ${JSON.stringify(message)}`)
-        if (this._rpcSuccessful(message, 'deviceAndMeasurementResult', messageId)) {
+        const responseMessage = event.data;
+
+        if (this._rpcSuccessful(responseMessage, 'deviceAndMeasurementResult', requestMessage.messageId)) {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
-          resolve(message.data.response);
+          resolve(responseMessage.data.response);
         } else {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
-          reject(new Error(message.data.error));
+          reject(new Error(responseMessage.data.error));
         }
       };
 
       window.addEventListener('message', returnHandler);
 
       if ('flutter_inappwebview' in window) {
-        window.flutter_inappwebview.callHandler(message.type, message);
+        window.flutter_inappwebview.callHandler(requestMessage.type, requestMessage);
       } else if ('ReactNativeWebView' in window) {
-        window.ReactNativeWebView.postMessage(message)
+        window.ReactNativeWebView.postMessage(requestMessage)
       }
     });
   }
@@ -55,7 +54,7 @@ class NativeRpc {
   closeDevice (deviceIdentifier) {
     const messageId = this._messageId++
 
-    const message = {
+    const requestMessage = {
       type: 'closeDevice',
       messageId,
       data: {
@@ -64,33 +63,32 @@ class NativeRpc {
     }
 
     return new Promise((resolve, reject) => {
-      // If the native app hasn't responded in 3 secs then timeout
+      // If the native app hasn't responded in 10 secs then timeout
       const rpcTimeout = setTimeout(() => {
-        console.warn('timeout reach - destroying listener');
         window.removeEventListener('message', returnHandler);
-        reject(new Error(`Timeout calling function: ${message.type}`));
+        reject(new Error(`Timeout calling ${requestMessage.type}`));
       }, 10 * 1000);
 
       const returnHandler = (event) => {
-        const message = event.data;
-        window.alert(`closeDevice Message ${JSON.stringify(message)}`)
-        if (this._rpcSuccessful(message, 'deviceClosed', messageId)) {
+        const responseMessage = event.data;
+
+        if (this._rpcSuccessful(responseMessage, 'deviceClosed', requestMessage.messageId)) {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
-          resolve(message.data.response);
+          resolve(responseMessage.data.response);
         } else {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
-          reject(new Error(`Error calling ${message.type}`, message.data.error));
+          reject(new Error(`Error calling ${requestMessage.type}`, responseMessage.data.error));
         }
       };
 
       window.addEventListener('message', returnHandler);
 
       if ('flutter_inappwebview' in window) {
-        window.flutter_inappwebview.callHandler(message.type, message);
+        window.flutter_inappwebview.callHandler(requestMessage.type, requestMessage);
       } else if ('ReactNativeWebView' in window) {
-        window.ReactNativeWebView.postMessage(message)
+        window.ReactNativeWebView.postMessage(requestMessage)
       }
     });
   }
