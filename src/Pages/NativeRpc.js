@@ -79,6 +79,7 @@ class NativeRpc {
         } else {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
+          console.log('Response error: ', responseMessage.data.error)
           reject(new Error(`Error calling ${requestMessage.type}`, responseMessage.data.error));
         }
       };
