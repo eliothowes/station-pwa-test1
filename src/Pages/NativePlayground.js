@@ -6,19 +6,19 @@ import BloodPressureLibrary from '../Devices/integrations/BloodPressure';
 import './NativePlayground.css'
 
 const NativePlayground = () => {
+  // const pulseOximeterAdapter = PulseOximeterLibrary.requestAdapter('taidoc-td8255-ble');
+  const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble');
+  const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble');
+
   const [rpcResponse, setRpcResponse] = useState();
 
   const [pulseOximeterReadings, setPulseOximeterReadings] = useState([]);
 
   const [thermometerReadings, setThermometerReadings] = useState([]);
-  const [thermometerStatus, setThermometerStatus] = useState([]);
+  const [thermometerStatus, setThermometerStatus] = useState(thermometerAdapter.status);
 
   const [bloodPressureReadings, setBloodPressureReadings] = useState([]);
-  const [bloodPressureStatus, setBloodPressureStatus] = useState([]);
-
-  // const pulseOximeterAdapter = PulseOximeterLibrary.requestAdapter('taidoc-td8255-ble');
-  const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble');
-  const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble');
+  const [bloodPressureStatus, setBloodPressureStatus] = useState(bloodPressureAdapter.status);
 
   /**
    *
@@ -98,10 +98,14 @@ const NativePlayground = () => {
   const handleThermometerChangeEvent = () => {
     setThermometerStatus(thermometerAdapter.status);
   }
+  const handleThermometerError = (error) => {
+    window.alert(JSON.stringify(error));
+  }
 
   const handleOpenThermometer = () => {
     thermometerAdapter.on('data', handleThermometerData);
     thermometerAdapter.on('change', handleThermometerChangeEvent);
+    thermometerAdapter.on('error', handleThermometerError);
 
     return thermometerAdapter.open();
   }
@@ -118,14 +122,17 @@ const NativePlayground = () => {
    const handleBloodPressureData = (data) => {
     setBloodPressureReadings([data]);
   }
-
   const handleBloodPressureChangeEvent = () => {
     setBloodPressureStatus(bloodPressureAdapter.status);
+  }
+  const handleBloodPressureError = (error) => {
+    window.alert(JSON.stringify(error));
   }
 
   const handleOpenBloodPressure = () => {
     bloodPressureAdapter.on('data', handleBloodPressureData);
-    thermometerAdapter.on('change', handleBloodPressureChangeEvent);
+    bloodPressureAdapter.on('change', handleBloodPressureChangeEvent);
+    bloodPressureAdapter.on('change', handleBloodPressureError);
 
     return bloodPressureAdapter.open();
   }
