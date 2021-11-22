@@ -23,15 +23,14 @@ class NativeRpc {
     return new Promise((resolve, reject) => {
       // If the native app hasn't responded in 10 secs then timeout
       const rpcTimeout = setTimeout(() => {
-        window.alert('timeout reach - destroying listener')
+        console.warn('timeout reach - destroying listener');
         window.removeEventListener('message', returnHandler);
         reject(new Error(`Timeout calling function: ${message.type}`));
       }, 10 * 1000);
 
       const returnHandler = (event) => {
-        window.alert('returnHandler')
         const message = event.data;
-        window.alert(`getDeviceAndMeasurement ${JSON.stringify(message)}`)
+        window.alert(`getDeviceAndMeasurement Message ${JSON.stringify(message)}`)
         if (this._rpcSuccessful(message, 'deviceAndMeasurementResult', messageId)) {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
@@ -46,8 +45,7 @@ class NativeRpc {
       window.addEventListener('message', returnHandler);
 
       if ('flutter_inappwebview' in window) {
-        window.alert('sending getDeviceAndMeasurement')
-        window.flutter_inappwebview.callHandler('getDeviceAndMeasurement', message);
+        window.flutter_inappwebview.callHandler(message.type, message);
       } else if ('ReactNativeWebView' in window) {
         window.ReactNativeWebView.postMessage(message)
       }
@@ -68,22 +66,23 @@ class NativeRpc {
     return new Promise((resolve, reject) => {
       // If the native app hasn't responded in 3 secs then timeout
       const rpcTimeout = setTimeout(() => {
+        console.warn('timeout reach - destroying listener');
         window.removeEventListener('message', returnHandler);
         reject(new Error(`Timeout calling function: ${message.type}`));
       }, 10 * 1000);
 
       const returnHandler = (event) => {
         const message = event.data;
-        window.alert(`Return handler ${JSON.stringify(message)}`)
+        window.alert(`closeDevice Message ${JSON.stringify(message)}`)
         if (this._rpcSuccessful(message, 'deviceClosed', messageId)) {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
           resolve(message.data.response);
+        } else {
+          clearTimeout(rpcTimeout);
+          window.removeEventListener('message', returnHandler);
+          reject(new Error(message.data.error));
         }
-
-        clearTimeout(rpcTimeout);
-        window.removeEventListener('message', returnHandler);
-        reject(new Error(message.data.error));
       };
 
       window.addEventListener('message', returnHandler);
