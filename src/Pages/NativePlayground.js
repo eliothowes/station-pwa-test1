@@ -2,19 +2,23 @@ import React, {useState} from 'react';
 import nativeRpc from './NativeRpc';
 import ThermometerLibrary from '../Devices/integrations/Thermometer';
 // import PulseOximeterLibrary from '../Devices/integrations/PulseOximeter';
-// import BloodPressureLibrary from '../Devices/integrations/BloodPressure';
+import BloodPressureLibrary from '../Devices/integrations/BloodPressure';
 import './NativePlayground.css'
 
 const NativePlayground = () => {
   const [rpcResponse, setRpcResponse] = useState();
 
-  const [thermometerReadings, setThermometerReadings] = useState([]);
-  const [bloodPressureReadings, setBloodPressureReadings] = useState([]);
   const [pulseOximeterReadings, setPulseOximeterReadings] = useState([]);
+
+  const [thermometerReadings, setThermometerReadings] = useState([]);
+  const [thermometerStatus, setThermometerStatus] = useState([]);
+
+  const [bloodPressureReadings, setBloodPressureReadings] = useState([]);
+  const [bloodPressureStatus, setBoodPressureStatus] = useState([]);
 
   // const pulseOximeterAdapter = PulseOximeterLibrary.requestAdapter('taidoc-td8255-ble');
   const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble');
-  // const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble')
+  const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble');
 
   /**
    *
@@ -89,37 +93,47 @@ const NativePlayground = () => {
    */
 
   const handleThermometerData = (data) => {
-    window.alert(`handleThermometerData ${data}`)
-    setThermometerReadings(currentReadings => [...currentReadings, data])
+    setThermometerReadings([data]);
+  }
+  const handleThermometerChangeEvent = () => {
+    setThermometerStatus(thermometerAdapter.status);
   }
 
   const handleOpenThermometer = () => {
-    thermometerAdapter.on('data', handleThermometerData)
-    return thermometerAdapter.open()
+    thermometerAdapter.on('data', handleThermometerData);
+    thermometerAdapter.on('change', handleThermometerChangeEvent);
+
+    return thermometerAdapter.open();
   }
 
   const handleCloseThermometer = () => {
-    setThermometerReadings([])
-    return thermometerAdapter.close()
+    setThermometerReadings([]);
+    return thermometerAdapter.close();
   }
 
   /**
    * Blood Pressure
    */
 
-  //  const handleBloodPressureData = (data) => {
-  //   setBloodPressureReadings(currentReadings => [...currentReadings, data])
-  // }
+   const handleBloodPressureData = (data) => {
+    setBloodPressureReadings([data]);
+  }
 
-  // const handleOpenBloodPressure = () => {
-  //   bloodPressureAdapter.on('data', handleBloodPressureData)
-  //   return bloodPressureAdapter.open()
-  // }
+  const handleBloodPressureChangeEvent = () => {
+    setThermometerStatus(thermometerAdapter.status);
+  }
 
-  // const handleCloseBloodPressure = () => {
-  //   setBloodPressureReadings([])
-  //   return bloodPressureAdapter.close()
-  // }
+  const handleOpenBloodPressure = () => {
+    bloodPressureAdapter.on('data', handleBloodPressureData);
+    thermometerAdapter.on('change', handleBloodPressureChangeEvent);
+
+    return bloodPressureAdapter.open();
+  }
+
+  const handleCloseBloodPressure = () => {
+    setBloodPressureReadings([]);
+    return bloodPressureAdapter.close()
+  }
 
   return (
     <div>
@@ -160,6 +174,7 @@ const NativePlayground = () => {
         </button>
       </div>
       <h3>Thermometer Output</h3>
+      <p>Status: {thermometerStatus}</p>
       <div className="device-output">
         {thermometerReadings.map(reading => {
           return (
@@ -175,12 +190,10 @@ const NativePlayground = () => {
 
       <h3>Blood Pressure Controls</h3>
       <div className="buttons-container">
-        {/* <button onClick={handleOpenBloodPressure}> */}
-        <button onClick={() => getDeviceAndMeasurement('taidoc-td3128-ble', setBloodPressureReadings)}>
+        <button onClick={handleOpenBloodPressure}>
           Connect to TD-3128 and get reading
         </button>
-        {/* <button onClick={handleCloseBloodPressure}> */}
-        <button onClick={() => closeDevice('taidoc-td3128-ble', setBloodPressureReadings)}>
+        <button onClick={handleCloseBloodPressure}>
           Close TD-3128
         </button>
       </div>
