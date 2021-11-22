@@ -37,7 +37,8 @@ class NativeRpc {
         } else {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
-          reject(new Error(responseMessage.data.error));
+          const error = responseMessage.data.error;
+          reject(new Error(error.message, error.details));
         }
       };
 
@@ -79,7 +80,8 @@ class NativeRpc {
         } else {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
-          reject(new Error(`Error calling ${requestMessage.type}`, responseMessage.data.error));
+          const error = responseMessage.data.error;
+          reject(new Error(error.message, error.details));
         }
       };
 
