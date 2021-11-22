@@ -27,6 +27,7 @@ export default class TD1241 extends Adapter {
     })
     .catch(error => {
       console.error('Error opening device', error.message, error.details);
+      console.error(error);
       this._emitError(error);
       this.close();
     });
@@ -45,6 +46,7 @@ export default class TD1241 extends Adapter {
     })
     .catch(error => {
       console.error('Error closing device', error.message, error.details);
+      console.error(error);
       this._emitError(error)
       // await this.close(); // SHOULD WE TRY AGAIN IF IT FAILS TO CLOSE
     });
