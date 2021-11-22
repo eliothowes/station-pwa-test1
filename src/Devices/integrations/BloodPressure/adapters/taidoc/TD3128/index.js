@@ -20,10 +20,10 @@ export default class TD3128 extends Adapter {
 
     try {
       const bleResponse = await nativeRpc.getDeviceAndMeasurement(TD3128.id);
-      this._processDataObject(bleResponse);
-
       this._log('connection opened');
       this._changeStatus('connected');
+
+      this._processDataObject(bleResponse);
     }
     catch (error) {
       console.error('Error opening device:', JSON.stringify(error));
@@ -44,7 +44,7 @@ export default class TD3128 extends Adapter {
       this._log('closed');
     }
     catch (error) {
-      console.error('Error closing device', JSON.stringify(error));
+      console.error('Error closing device', error);
       this._emitError(error)
       // await this.close(); // SHOULD WE TRY AGAIN IF IT FAILS TO CLOSE
     }
