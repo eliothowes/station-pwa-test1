@@ -103,7 +103,7 @@ class NativeRpc {
 
         if (this._rpcSuccessful(responseMessage, 'deviceAndMeasurementResult', requestMessage.messageId)) {
           clearTimeout(rpcTimeout);
-          this._isIterating = false;
+          this._isIterating = true;
           this._dataHandler(responseMessage.data.response);
           resolve();
         } else {
