@@ -33,7 +33,7 @@ export default class TD8255 extends Adapter {
     })
     .then(async () => {
       for await (const data of nativeRpc.getReadings()) {
-        console.log("DATA: ", data);
+        console.log("DATA: ", JSON.stringify(data));
         this._processDataArray(data);
       }
     })
