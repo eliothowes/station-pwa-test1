@@ -100,7 +100,7 @@ class NativeRpc {
         if (requestMessage.type !== 'deviceAndMeasurementResult') {
           return;
         }
-
+        window.alert(`is successful ${JSON.stringify(responseMessage)} ${requestMessage.messageId}`)
         if (this._rpcSuccessful(responseMessage, 'deviceAndMeasurementResult', requestMessage.messageId)) {
           clearTimeout(rpcTimeout);
           this._isIterating = true;
