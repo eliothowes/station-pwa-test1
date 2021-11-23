@@ -1,18 +1,17 @@
 import React, {useState} from 'react';
-import nativeRpc from '../Devices/NativeRpc';
 import ThermometerLibrary from '../Devices/integrations/Thermometer';
-// import PulseOximeterLibrary from '../Devices/integrations/PulseOximeter';
+import PulseOximeterLibrary from '../Devices/integrations/PulseOximeter';
 import BloodPressureLibrary from '../Devices/integrations/BloodPressure';
 import './NativePlayground.css'
 
 const NativePlayground = () => {
-  // const pulseOximeterAdapter = PulseOximeterLibrary.requestAdapter('taidoc-td8255-ble');
+  const pulseOximeterAdapter = PulseOximeterLibrary.requestAdapter('taidoc-td8255-ble');
   const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble');
   const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble');
 
-  const [rpcResponse, setRpcResponse] = useState();
 
   const [pulseOximeterReadings, setPulseOximeterReadings] = useState([]);
+  const [pulseOximeterStatus, setPulseOximeterStatus] = useState(pulseOximeterAdapter.status);
 
   const [thermometerReadings, setThermometerReadings] = useState([]);
   const [thermometerStatus, setThermometerStatus] = useState(thermometerAdapter.status);
@@ -20,73 +19,88 @@ const NativePlayground = () => {
   const [bloodPressureReadings, setBloodPressureReadings] = useState([]);
   const [bloodPressureStatus, setBloodPressureStatus] = useState(bloodPressureAdapter.status);
 
-  /**
-   *
-   * BLE Scan
-   */
-  const getDeviceAndMeasurement = async (deviceIdentifier, setData) => {
-    if (window.isMobileWebView) {
-      return nativeRpc.getDeviceAndMeasurement(deviceIdentifier)
-      .then(result => {
-        console.warn(`Here in result land: ${JSON.stringify(result)}`)
-        console.log(result)
-        setRpcResponse(result)
-        setData(currentResults => [result, ...currentResults])
-      })
-    }
+  // /**
+  //  *
+  //  * BLE Scan
+  //  */
+  // const getDeviceAndMeasurement = async (deviceIdentifier, setData) => {
+  //   if (window.isMobileWebView) {
+  //     return nativeRpc.getDeviceAndMeasurement(deviceIdentifier)
+  //     .then(result => {
+  //       console.warn(`Here in result land: ${JSON.stringify(result)}`)
+  //       console.log(result)
+  //       setRpcResponse(result)
+  //       setData(currentResults => [result, ...currentResults])
+  //     })
+  //   }
 
-    console.log(
-      'Not running inside webview. The following was not sent: ',
-      '\n',
-      '<<<', 'startScan', '>>>'
-    )
-  }
+  //   console.log(
+  //     'Not running inside webview. The following was not sent: ',
+  //     '\n',
+  //     '<<<', 'startScan', '>>>'
+  //   )
+  // }
 
-  /**
-   *
-   * Close Device
-   */
-  const closeDevice = async (deviceIdentifier, setData) => {
-    if (window.isMobileWebView) {
-      return nativeRpc.closeDevice(deviceIdentifier)
-      .then(result => {
-        console.log(JSON.stringify(result))
-        setRpcResponse()
-        setData([])
-      })
-      .catch(error => {
-        console.error(error)
-        setRpcResponse(error)
-        setData([error])
-      })
+  // /**
+  //  *
+  //  * Close Device
+  //  */
+  // const closeDevice = async (deviceIdentifier, setData) => {
+  //   if (window.isMobileWebView) {
+  //     return nativeRpc.closeDevice(deviceIdentifier)
+  //     .then(result => {
+  //       console.log(JSON.stringify(result))
+  //       setRpcResponse()
+  //       setData([])
+  //     })
+  //     .catch(error => {
+  //       console.error(error)
+  //       setRpcResponse(error)
+  //       setData([error])
+  //     })
 
-    }
+  //   }
 
-    console.log(
-      'Not running inside webview. The following was not sent: ',
-      '\n',
-      '<<<', 'closeDevice', {deviceIdentifier}, '>>>'
-    )
-  }
+  //   console.log(
+  //     'Not running inside webview. The following was not sent: ',
+  //     '\n',
+  //     '<<<', 'closeDevice', {deviceIdentifier}, '>>>'
+  //   )
+  // }
 
   /**
    * Pulse Oximeter
    */
 
-  // const handlePulseOximeterData = (data) => {
-  //   setPulseOximeterReadings(currentReadings => [...currentReadings, data])
-  // }
+  const handlePulseOximeterData = (data) => {
+    setPulseOximeterReadings([data])
+  }
+  const handlePulseOximeterChangeEvent = () => {
+    setPulseOximeterStatus(pulseOximeterAdapter.status)
+  }
+  const handlePulseOximeterError = (error) => {
+    console.error('IN ERROR HANDLER: ', error)
+    window.alert(error);
+  }
 
-  // const handleOpenPulseOximeter = () => {
-  //   pulseOximeterAdapter.on('data', handlePulseOximeterData)
-  //   return pulseOximeterAdapter.open()
-  // }
+  const handleOpenPulseOximeter = () => {
+    pulseOximeterAdapter.on('data', handlePulseOximeterData)
+    pulseOximeterAdapter.on('change', handlePulseOximeterChangeEvent);
+    pulseOximeterAdapter.on('error', handlePulseOximeterError);
 
-  // const handleClosePulseOximeter = () => {
-  //   setPulseOximeterReadings([])
-  //   return pulseOximeterAdapter.close()
-  //   .then(() => setPulseOximeterReadings([]))
-  // }
+    return pulseOximeterAdapter.open()
+  }
+
+  const handleClosePulseOximeter = () => {
+    return pulseOximeterAdapter.close()
+    .then(() => {
+      pulseOximeterAdapter.off('data', handlePulseOximeterData)
+      pulseOximeterAdapter.off('change', handlePulseOximeterChangeEvent);
+      pulseOximeterAdapter.off('error', handlePulseOximeterError);
+
+      setPulseOximeterReadings([])
+    })
+  }
 
   /**
    * Thermometer
@@ -112,6 +126,10 @@ const NativePlayground = () => {
   }
 
   const handleCloseThermometer = () => {
+    thermometerAdapter.off('data', handleThermometerData);
+    thermometerAdapter.off('change', handleThermometerChangeEvent);
+    thermometerAdapter.off('error', handleThermometerError);
+
     setThermometerReadings([]);
     return thermometerAdapter.close();
   }
@@ -140,6 +158,10 @@ const NativePlayground = () => {
   }
 
   const handleCloseBloodPressure = () => {
+    bloodPressureAdapter.off('data', handleBloodPressureData);
+    bloodPressureAdapter.off('change', handleBloodPressureChangeEvent);
+    bloodPressureAdapter.off('error', handleBloodPressureError);
+
     setBloodPressureReadings([]);
     return bloodPressureAdapter.close()
   }
@@ -148,16 +170,15 @@ const NativePlayground = () => {
     <div>
       <h3>Pulse Oximeter Controls</h3>
       <div className="buttons-container">
-        {/* <button onClick={handleOpenPulseOximeter}> */}
-        <button onClick={() => getDeviceAndMeasurement('taidoc-td8255-ble', setPulseOximeterReadings)}>
+        <button onClick={handleOpenPulseOximeter}>
           Connect to TD-8255 and get readings
         </button>
-        {/* <button onClick={handleClosePulseOximeter}> */}
-        <button onClick={() => closeDevice('taidoc-td8255-ble', setPulseOximeterReadings)}>
+        <button onClick={handleClosePulseOximeter}>
           Close TD-8255
         </button>
       </div>
       <h3>Pulse Oximeter Output</h3>
+      <p>Status: {pulseOximeterStatus}</p>
       <div className="device-output">
         {pulseOximeterReadings.map(reading => {
           return (
@@ -219,15 +240,6 @@ const NativePlayground = () => {
           )
         })}
       </div>
-
-
-      <h5>Raw rpc output</h5>
-      {rpcResponse && (
-        <div className="rpc-output mt">
-          <h6>RPC Response</h6>
-          <pre>{JSON.stringify(rpcResponse, null, 2)}</pre>
-        </div>
-      )}
     </div>
   );
 };
