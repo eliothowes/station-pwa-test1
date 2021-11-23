@@ -49,7 +49,7 @@ class NativeRpc {
         const responseMessage = event.data;
 
         // Handle non responses
-        if (requestMessage.type !== 'deviceAndMeasurementResult') {
+        if (responseMessage.type !== 'deviceAndMeasurementResult') {
           return;
         }
 
@@ -97,7 +97,7 @@ class NativeRpc {
         const responseMessage = event.data;
 
         // Handle non responses
-        if (requestMessage.type !== 'deviceAndMeasurementResult') {
+        if (responseMessage.type !== 'deviceAndMeasurementResult') {
           return;
         }
         window.alert(`is successful ${JSON.stringify(responseMessage)} ${requestMessage.messageId}`)
