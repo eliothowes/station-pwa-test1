@@ -95,7 +95,7 @@ class NativeRpc {
 
       const returnHandler = (event) => {
         const responseMessage = event.data;
-        window.alert(`HIT getDeviceAndStreamMeasurements returnHandler ${JSON.stringify(responseMessage)}`)
+
         // Handle non responses
         if (requestMessage.type !== 'deviceAndMeasurementResult') {
           return;
@@ -104,6 +104,7 @@ class NativeRpc {
         if (this._rpcSuccessful(responseMessage, 'deviceAndMeasurementResult', requestMessage.messageId)) {
           clearTimeout(rpcTimeout);
           this._isIterating = true;
+          window.alert(`returnHandler success ${JSON.stringify(responseMessage.data.response)}`)
           this._dataHandler(responseMessage.data.response);
           resolve();
         } else {
