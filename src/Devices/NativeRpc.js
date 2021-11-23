@@ -95,7 +95,7 @@ class NativeRpc {
 
       const returnHandler = (event) => {
         const responseMessage = event.data;
-        window.alert(`HIT getDeviceAndStreamMeasurements returnHandler ${responseMessage}`)
+        window.alert(`HIT getDeviceAndStreamMeasurements returnHandler ${JSON.stringify(responseMessage)}`)
         // Handle non responses
         if (requestMessage.type !== 'deviceAndMeasurementResult') {
           return;
