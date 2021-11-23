@@ -144,7 +144,7 @@ class NativeRpc {
 
       const returnHandler = (event) => {
         const responseMessage = event.data;
-
+        window.alert(`HIT returnHandler ${responseMessage}`)
         if (this._rpcSuccessful(responseMessage, 'deviceClosed', requestMessage.messageId)) {
           clearTimeout(rpcTimeout);
           window.removeEventListener('message', returnHandler);
