@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import nativeRpc from './NativeRpc';
+import nativeRpc from '../Devices/NativeRpc';
 import ThermometerLibrary from '../Devices/integrations/Thermometer';
 // import PulseOximeterLibrary from '../Devices/integrations/PulseOximeter';
 import BloodPressureLibrary from '../Devices/integrations/BloodPressure';

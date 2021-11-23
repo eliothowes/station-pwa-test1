@@ -1,5 +1,5 @@
 import Adapter from '../../../../../Adapter';
-import nativeRpc from '../../../../../../Pages/NativeRpc';
+import nativeRpc from '../../../../../NativeRpc';
 
 export default class TD3128 extends Adapter {
   // Required by Device class

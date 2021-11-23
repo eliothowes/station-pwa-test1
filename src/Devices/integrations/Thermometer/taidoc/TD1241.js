@@ -1,4 +1,4 @@
-import nativeRpc from '../../../../Pages/NativeRpc';
+import nativeRpc from '../../../NativeRpc';
 import Adapter from '../../../Adapter';
 
 export default class TD1241 extends Adapter {

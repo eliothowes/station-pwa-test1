@@ -1,4 +1,4 @@
-import nativeRpc from '../../../../../Pages/NativeRpc';
+import nativeRpc from '../../../../NativeRpc';
 import Adapter from '../../../../Adapter';
 
 export default class TD8255 extends Adapter {
@@ -15,53 +15,33 @@ export default class TD8255 extends Adapter {
 
   constructor () {
     super();
-    this.data = [];
+    this._data = [];
+    this._isIterating = true;
   }
 
   async open () {
     super.open();
 
-    // Start receiving data
-    this._receiveLoop(this.revision);
-
     this._log('waiting for device connection');
+    this._isIterating = true;
 
-    /*
-     * Wait to receive some data before we say we're connected
-     */
-    while (this.data.length === 0) {
-      await new Promise(resolve => setTimeout(resolve, 10));
-    }
 
-    this._log('connection opened');
-    this._changeStatus('connected');
-  }
-
-  _receiveLoop = (revision) => {
-    window.alert('_receiveLoop')
-    // If the revision get's bumped then exit
-    if (revision !== this.revision) {
-      console.log('This connection is no longer live');
-      return;
-    }
-
-    try {
-      nativeRpc.getDeviceAndMeasurement(TD8255.id)
-      .then(response => {
-        window.alert(`Proccess data array, ${JSON.stringify(response)}`)
-        this.data = [...this.data, response]
-        this._processDataArray(response)
-      });
-    }
-    catch (err) {
-      console.error('Caught error:', err);
+    return nativeRpc.getDeviceAndStreamMeasurements(TD8255.id)
+    .then(() => {
+      this._log('connection opened');
+      this._changeStatus('connected');
+    })
+    .then(async () => {
+      for await (const data of nativeRpc.getReadings()) {
+        console.log("DATA: ", data);
+        this._processDataArray(data);
+      }
+    })
+    .catch((error) => {
+      console.error('Error opening device', error);
+      this._emitError(error);
       this.close();
-    }
-
-    // Exited above
-    process.nextTick(() => {
-      this._receiveLoop(revision);
-    });
+    })
   }
 
   close (targetRevision = this.revision) {
@@ -70,11 +50,15 @@ export default class TD8255 extends Adapter {
     // Change the revision will cause any outstanding requests to fail/end
     this.revision += 1;
 
-    this._changeStatus('disconnected');
-
-    return nativeRpc.closeDevice()
+    return nativeRpc.closeDevice(TD8255.id)
     .then(() => {
+      this._changeStatus('disconnected');
       this._log('closed');
+    })
+    .catch(error => {
+      console.error('Error closing device', error);
+      this._emitError(error)
+      // await this.close(); // SHOULD WE TRY AGAIN IF IT FAILS TO CLOSE
     });
   }
 }
