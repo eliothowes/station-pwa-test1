@@ -18,22 +18,37 @@ export default class TD8255 extends Adapter {
 
     this._log('waiting for device connection');
 
-    return nativeRpc.getDeviceAndStreamMeasurements(TD8255.id)
-    .then(() => {
+    try {
+      await nativeRpc.setupDeviceAndDataHandlers(TD8255.id);
       this._log('connection opened');
       this._changeStatus('connected');
-    })
-    .then(async () => {
-      for await (const data of nativeRpc.getReadings()) {
-        console.log("DATA: ", JSON.stringify(data));
-        this._processDataObject(data);
-      }
-    })
-    .catch((error) => {
+    }
+    catch (error) {
       console.error('Error opening device', error);
       this._emitError(error);
-      this.close();
-    })
+      return this.close();
+    }
+
+    for await (const data of nativeRpc.iterateData()) {
+      console.log("DATA: ", JSON.stringify(data));
+      this._processDataObject(data);
+    }
+    // return nativeRpc.getDeviceAndStreamMeasurements(TD8255.id)
+    // .then(() => {
+    //   this._log('connection opened');
+    //   this._changeStatus('connected');
+    // })
+    // .then(async () => {
+    //   for await (const data of nativeRpc.getReadings()) {
+    //     console.log("DATA: ", JSON.stringify(data));
+    //     this._processDataObject(data);
+    //   }
+    // })
+    // .catch((error) => {
+    //   console.error('Error opening device', error);
+    //   this._emitError(error);
+    //   this.close();
+    // })
   }
 
   close (targetRevision = this.revision) {
@@ -42,15 +57,8 @@ export default class TD8255 extends Adapter {
     // Change the revision will cause any outstanding requests to fail/end
     this.revision += 1;
 
-    return nativeRpc.closeDevice(TD8255.id)
-    .then(() => {
-      this._changeStatus('disconnected');
-      this._log('closed');
-    })
-    .catch(error => {
-      console.error('Error closing device', error);
-      this._emitError(error)
-      // await this.close(); // SHOULD WE TRY AGAIN IF IT FAILS TO CLOSE
-    });
+    nativeRpc.closeDevice(TD8255.id)
+    this._changeStatus('disconnected');
+    this._log('closed');
   }
 }

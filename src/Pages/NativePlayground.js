@@ -92,14 +92,13 @@ const NativePlayground = () => {
   }
 
   const handleClosePulseOximeter = () => {
-    return pulseOximeterAdapter.close()
-    .then(() => {
-      pulseOximeterAdapter.off('data', handlePulseOximeterData)
-      pulseOximeterAdapter.off('change', handlePulseOximeterChangeEvent);
-      pulseOximeterAdapter.off('error', handlePulseOximeterError);
+    setPulseOximeterReadings([])
+    pulseOximeterAdapter.off('data', handlePulseOximeterData)
+    pulseOximeterAdapter.off('change', handlePulseOximeterChangeEvent);
+    pulseOximeterAdapter.off('error', handlePulseOximeterError);
 
-      setPulseOximeterReadings([])
-    })
+    pulseOximeterAdapter.close()
+    return handlePulseOximeterChangeEvent();
   }
 
   /**
@@ -126,12 +125,13 @@ const NativePlayground = () => {
   }
 
   const handleCloseThermometer = () => {
+    setThermometerReadings([]);
     thermometerAdapter.off('data', handleThermometerData);
     thermometerAdapter.off('change', handleThermometerChangeEvent);
     thermometerAdapter.off('error', handleThermometerError);
 
-    setThermometerReadings([]);
-    return thermometerAdapter.close();
+    thermometerAdapter.close();
+    return handleThermometerChangeEvent()
   }
 
   /**
@@ -158,12 +158,13 @@ const NativePlayground = () => {
   }
 
   const handleCloseBloodPressure = () => {
+    setBloodPressureReadings([]);
     bloodPressureAdapter.off('data', handleBloodPressureData);
     bloodPressureAdapter.off('change', handleBloodPressureChangeEvent);
     bloodPressureAdapter.off('error', handleBloodPressureError);
 
-    setBloodPressureReadings([]);
-    return bloodPressureAdapter.close()
+    bloodPressureAdapter.close()
+    return handleBloodPressureChangeEvent();
   }
 
   return (
