@@ -33,22 +33,6 @@ export default class TD8255 extends Adapter {
       console.log("DATA: ", JSON.stringify(data));
       this._processDataObject(data);
     }
-    // return nativeRpc.getDeviceAndStreamMeasurements(TD8255.id)
-    // .then(() => {
-    //   this._log('connection opened');
-    //   this._changeStatus('connected');
-    // })
-    // .then(async () => {
-    //   for await (const data of nativeRpc.getReadings()) {
-    //     console.log("DATA: ", JSON.stringify(data));
-    //     this._processDataObject(data);
-    //   }
-    // })
-    // .catch((error) => {
-    //   console.error('Error opening device', error);
-    //   this._emitError(error);
-    //   this.close();
-    // })
   }
 
   close (targetRevision = this.revision) {
