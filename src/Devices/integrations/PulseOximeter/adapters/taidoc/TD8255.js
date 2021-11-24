@@ -13,18 +13,10 @@ export default class TD8255 extends Adapter {
     services: {}
   };
 
-  constructor () {
-    super();
-    this._data = [];
-    this._isIterating = true;
-  }
-
   async open () {
     super.open();
 
     this._log('waiting for device connection');
-    this._isIterating = true;
-
 
     return nativeRpc.getDeviceAndStreamMeasurements(TD8255.id)
     .then(() => {

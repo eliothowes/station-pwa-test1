@@ -19,11 +19,11 @@ class NativeRpc {
     while (this._isIterating) {
       if (this._data.length > 0) {
         // first in first out
-        yield this._data[0];
+        yield this._data.pop();
       }
 
       // reduce resource usage
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 
