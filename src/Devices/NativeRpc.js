@@ -41,19 +41,20 @@ class NativeRpc {
     return new Promise((resolve, reject) => {
       // If the native app hasn't responded in 10 secs then timeout
       const rpcTimeout = setTimeout(() => {
-        window.removeEventListener('message', this.returnHandlerThing);
+        window.removeEventListener('message', this.rpcDataHandler);
         reject(new Error(`Timeout calling ${requestMessage.type}`));
       }, 10 * 1000);
 
       this.rpcDataHandler = (event) => {
         const responseMessage = event.data;
-
+        console.log('<<< rpcDataHandler >>>')
         // Handle non responses
-        if (responseMessage.messageId !== messageId) {
+        if (responseMessage.messageId !== requestMessage.messageId) {
           return;
         }
-
+        console.log('<<< rpcDataHandler messageId checked >>>')
         if (this._rpcSuccessful(responseMessage, 'deviceAndMeasurementResult', requestMessage.messageId)) {
+          console.log('<<< rpcDataHandler success >>>')
           clearTimeout(rpcTimeout);
           this._dataHandler(responseMessage.data.response);
           this._isIterating = true;
@@ -61,13 +62,13 @@ class NativeRpc {
           resolve();
         } else {
           clearTimeout(rpcTimeout);
-          window.removeEventListener('message', this.returnHandlerThing);
+          window.removeEventListener('message', this.rpcDataHandler);
           const error = responseMessage.data.error;
           reject(new Error(error.message, error.details));
         }
       };
 
-      window.addEventListener('message', this.returnHandlerThing);
+      window.addEventListener('message', this.rpcDataHandler);
 
       if ('flutter_inappwebview' in window) {
         window.flutter_inappwebview.callHandler(requestMessage.type, requestMessage);
@@ -94,7 +95,7 @@ class NativeRpc {
       window.ReactNativeWebView.postMessage(requestMessage)
     }
 
-    window.removeEventListener('message', this.returnHandlerThing);
+    window.removeEventListener('message', this.rpcDataHandler);
     this._data = [];
     this._isIterating = false;
   }
