@@ -18,35 +18,62 @@ export default class TD1241 extends Adapter {
 
     this._log('waiting for device connection');
 
-    return nativeRpc.getDeviceAndMeasurement(TD1241.id)
-    .then(response => {
+    try {
+      await nativeRpc.setupDeviceAndDataHandlers(TD1241.id);
       this._log('connection opened');
       this._changeStatus('connected');
-
-      this._processDataObject(response);
-    })
-    .catch(error => {
+    }
+    catch (error) {
       console.error('Error opening device', error);
       this._emitError(error);
-      this.close();
-    });
+      return this.close();
+    }
+
+    for await (const data of nativeRpc.iterateData()) {
+      console.log("DATA: ", JSON.stringify(data));
+      this._processDataObject(data);
+    }
+
+    // return nativeRpc.getDeviceAndMeasurement(TD1241.id)
+    // .then(response => {
+    //   this._log('connection opened');
+    //   this._changeStatus('connected');
+
+    //   this._processDataObject(response);
+    // })
+    // .catch(error => {
+    //   console.error('Error opening device', error);
+    //   this._emitError(error);
+    //   this.close();
+    // });
   }
 
-  async close (targetRevision = this.revision) {
+  close (targetRevision = this.revision) {
     super.close(targetRevision);
 
     // Change the revision will cause any outstanding requests to fail/end
     this.revision += 1;
 
-    return nativeRpc.closeDevice(TD1241.id)
-    .then(() => {
-      this._changeStatus('disconnected');
-      this._log('closed');
-    })
-    .catch(error => {
-      console.error('Error closing device', error);
-      this._emitError(error)
-      // await this.close(); // SHOULD WE TRY AGAIN IF IT FAILS TO CLOSE
-    });
+    nativeRpc.closeDevice(TD1241.id)
+    this._changeStatus('disconnected');
+    this._log('closed');
   }
+
+  // async close (targetRevision = this.revision) {
+  //   super.close(targetRevision);
+
+  //   // Change the revision will cause any outstanding requests to fail/end
+  //   this.revision += 1;
+
+  //   return nativeRpc.closeDevice(TD1241.id)
+  //   .then(() => {
+  //     this._changeStatus('disconnected');
+  //     this._log('closed');
+  //   })
+  //   .catch(error => {
+  //     console.error('Error closing device', error);
+  //     this._emitError(error)
+  //     // await this.close(); // SHOULD WE TRY AGAIN IF IT FAILS TO CLOSE
+  //   });
+  // }
 }
