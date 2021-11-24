@@ -19,34 +19,30 @@ export default class TD3128 extends Adapter {
     this._log('waiting for device connection');
 
     try {
-      const bleResponse = await nativeRpc.getDeviceAndMeasurement(TD3128.id);
+      await nativeRpc.setupDeviceAndDataHandlers(TD3128.id);
       this._log('connection opened');
       this._changeStatus('connected');
-
-      this._processDataObject(bleResponse);
     }
     catch (error) {
-      console.error('Error opening device:', JSON.stringify(error));
-      this._emitError(error)
-      await this.close();
+      console.error('Error opening device', error);
+      this._emitError(error);
+      return this.close();
+    }
+
+    for await (const data of nativeRpc.iterateData()) {
+      console.log("DATA: ", JSON.stringify(data));
+      this._processDataObject(data);
     }
   }
 
-  async close (targetRevision = this.revision) {
+  close (targetRevision = this.revision) {
     super.close(targetRevision);
 
     // Change the revision will cause any outstanding requests to fail/end
     this.revision += 1;
 
-    try {
-      await nativeRpc.closeDevice(TD3128.id);
-      this._changeStatus('disconnected');
-      this._log('closed');
-    }
-    catch (error) {
-      console.error('Error closing device', error);
-      this._emitError(error)
-      // await this.close(); // SHOULD WE TRY AGAIN IF IT FAILS TO CLOSE
-    }
+    nativeRpc.closeDevice(TD3128.id)
+    this._changeStatus('disconnected');
+    this._log('closed');
   }
 }
