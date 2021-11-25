@@ -186,7 +186,7 @@ const NativePlayground = () => {
             <div key={JSON.stringify(reading)}>
               <p>SpO2: {reading.spO2}</p>
               <p>Pulse: {reading.pulse}</p>
-              <p>Finger in: {reading.fingerIn}</p>
+              <p>Finger in: {reading.fingerin}</p>
               <p>Status: {reading.searching}</p>
             </div>
           )
@@ -211,7 +211,7 @@ const NativePlayground = () => {
           return (
             <div key={JSON.stringify(reading)}>
               <p>{`${reading.temperature} ${reading.units}`}</p>
-              <p>{reading.dateTimeValue}</p>
+              <p>{reading.datetime}</p>
             </div>
           )
         })}
