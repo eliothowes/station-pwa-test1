@@ -186,8 +186,8 @@ const NativePlayground = () => {
             <div key={JSON.stringify(reading)}>
               <p>SpO2: {reading.spO2}</p>
               <p>Pulse: {reading.pulse}</p>
-              <p>Finger in: {reading.fingerIn}</p>
-              <p>Status: {String(reading.searching)}</p>
+              <p>Finger in: {String(reading.fingerIn)}</p>
+              <p>Searching: {String(reading.searching)}</p>
             </div>
           )
         })}
