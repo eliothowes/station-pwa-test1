@@ -67,23 +67,24 @@ const App = () => {
         )}
       </div>
       <Router>
-        <Route exact path="/">
-          <Link to="/native">
-            Native Playground
-          </Link>
-          <div style={{display: 'inline', marginLeft: '1em'}}>
-            <Link to="/web">
-              Web Playground
-            </Link>
-          </div>
-        </Route>
         <Switch>
-        <Route path="/native">
-          <NativePlayground />
-        </Route>
-        <Route path="/web">
-          <WebPlayground />
-        </Route>
+          <Route exact path="/">
+            <h1>Pick runtime</h1>
+            <Link to="/native">
+              Native Playground
+            </Link>
+            <div style={{display: 'inline', marginLeft: '1em'}}>
+              <Link to="/web">
+                Web Playground
+              </Link>
+            </div>
+          </Route>
+          <Route path="/native">
+            <NativePlayground />
+          </Route>
+          <Route path="/web">
+            <WebPlayground />
+          </Route>
         </Switch>
       </Router>
     </div>

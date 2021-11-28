@@ -14,12 +14,51 @@ export default class AbstractUsb {
     return navigator.usb.removeEventListener(name, handler);
   }
 
-  static getDevices () {
-    return navigator.usb.getDevices();
-  }
-
   constructor (device) {
     this.device = device;
+  }
+
+  static async pairDevice (connectionProperties) {
+    if (this.device) {
+      return this.device;
+    }
+    else {
+      const device = await navigator.usb.requestDevice({
+        filters: [
+          connectionProperties
+        ]
+      });
+
+      return device;
+    }
+  }
+
+  static async getDevice (connectionProperties) {
+    if (this.device) {
+      return this.device;
+    }
+    else {
+      const devices = await navigator.usb.getDevices();
+
+      const device = devices.find(device => {
+        let deviceFound = false;
+
+        if (connectionProperties.vendorId) {
+          deviceFound = device.vendorId === connectionProperties.vendorId;
+        }
+        if (connectionProperties.productId) {
+          deviceFound = device.productId === connectionProperties.productId;
+        }
+
+        return deviceFound;
+      });
+
+      if (!device) {
+        return AbstractUsb.pairDevice(connectionProperties);
+      }
+
+      return device;
+    }
   }
 
   open () {

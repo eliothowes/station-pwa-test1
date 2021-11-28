@@ -2,6 +2,7 @@ import AbstractUsb from '../../../../AbstractUsb';
 import parseInputMessage from './parse_input_message';
 import {appendBuffer} from '../../../../util';
 import Adapter from '../../../../Adapter';
+import nativeRpc from '../../../../NativeRpc';
 
 
 /**
@@ -63,7 +64,8 @@ export default class Nonin3231 extends Adapter {
   static model = '3231';
   static connectionType = 'usb';
   static connectionProperties = {
-    vendorId: 7229
+    vendorId: 7229,
+    productId: 5
   };
 
   constructor () {
@@ -81,73 +83,97 @@ export default class Nonin3231 extends Adapter {
   async open () {
     super.open();
 
-    let device;
-    try {
-      const devices = await AbstractUsb.getDevices();
-      device = devices.find(device => device.vendorId === this.constructor.connectionProperties.vendorId);
+    if (window?.isMobileWebview) {
+      this._log('waiting for device connection');
+
+      try {
+        await nativeRpc.setupDeviceAndDataHandlers(Nonin3231.id);
+        this._log('connection opened');
+        this._changeStatus('connected');
+      }
+      catch (error) {
+        console.error('Error opening device', error);
+        this._emitError(error);
+        return this.close();
+      }
+
+      for await (const data of nativeRpc.iterateData()) {
+        console.log("DATA: ", JSON.stringify(data));
+        this._processDataObject(data);
+      }
     }
-    catch (error) {
-      this._changeStatus('disconnected');
-      this._emitError(error);
-      throw error;
+    else {
+      let device;
+      try {
+        device = await AbstractUsb.getDevice(Nonin3231.connectionProperties);
+      }
+      catch (error) {
+        this._emitError(error);
+        return this.close();
+      }
+
+      if (!device) {
+        this._emitError('No such devices connected');
+        return this.close();
+      }
+
+      this.device = device;
+      this._usb = new AbstractUsb(device);
+      const usb = this._usb;
+
+      try {
+        await usb.open();
+        await usb.selectConfiguration(1);
+        await usb.claimInterface(1);
+      }
+      catch (error) {
+        this._emitError(error);
+        return this.close();
+      }
+
+      const inEndpointNumber = device.configuration.interfaces[1].alternates[0].endpoints[1].endpointNumber;
+      const outEndpointNumber = device.configuration.interfaces[1].alternates[0].endpoints[0].endpointNumber;
+
+      this._inEndpointNumber = inEndpointNumber;
+      this._outEndpointNumber = outEndpointNumber;
+      this._log(`inEndpointNumber: ${inEndpointNumber}`);
+      this._log(`outEndpointNumber: ${outEndpointNumber}`);
+
+      // Start receiving data
+      this._receiveLoop(this.revision);
+
+      this._log('waiting for device to be turned on');
+
+      /*
+       * Wait to receive some data before we say we're connected
+       */
+      while (this.data.length === 0) {
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
+
+      this._log('connection opened');
+      this._changeStatus('connected');
     }
-
-    if (!device) {
-      throw new Error('No such devices connected');
-    }
-
-    this.device = device;
-    this._usb = new AbstractUsb(device);
-    const usb = this._usb;
-
-    try {
-      await usb.open();
-      await usb.selectConfiguration(1);
-      await usb.claimInterface(1);
-    }
-    catch (err) {
-      window.alert(err)
-    }
-
-    const inEndpointNumber = device.configuration.interfaces[1].alternates[0].endpoints[1].endpointNumber;
-    const outEndpointNumber = device.configuration.interfaces[1].alternates[0].endpoints[0].endpointNumber;
-
-    this._inEndpointNumber = inEndpointNumber;
-    this._outEndpointNumber = outEndpointNumber;
-    this._log(`inEndpointNumber: ${inEndpointNumber}`);
-    this._log(`outEndpointNumber: ${outEndpointNumber}`);
-
-    // Start receiving data
-    this._receiveLoop(this.revision);
-
-    this._log('waiting for device to be turned on');
-
-    /*
-     * Wait to receive some data before we say we're connected
-     */
-    while (this.data.length === 0) {
-      await new Promise(resolve => setTimeout(resolve, 10));
-    }
-
-    this._log('connection opened');
-    this._changeStatus('connected');
   }
 
 
   async close (targetRevision = this.revision) {
     super.close(targetRevision);
 
-    const usb = this._usb;
-
     // Change the revision will cause any outstanding requests to fail/end
     this.revision += 1;
 
-    this._changeStatus('disconnected');
-
-    if (usb) {
-      await usb.close();
+    if (window?.isMobileWebview) {
+      nativeRpc.closeDevice(Nonin3231.id)
+    }
+    else {
+      const usb = this._usb;
+      if (usb) {
+        await usb.close();
+      }
     }
 
+    this._changeStatus('disconnected');
     this._log('closed');
   }
 
