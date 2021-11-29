@@ -83,9 +83,9 @@ export default class Nonin3231 extends Adapter {
   async open () {
     super.open();
     console.log('\x1b[31m\x1b[47m%s\x1b[0m', '<<< Start >>>', '\n');
-    console.log('OPEN: ', window?.isMobileWebview);
+    console.log('OPEN: ', window?.isMobileWebView);
     console.log('\x1b[0m%s\x1b[32m\x1b[47m%s\x1b[0m', '\n', '<<< Finish >>>', '\n');
-    if (window?.isMobileWebview) {
+    if (window?.isMobileWebView) {
       this._log('waiting for device connection');
 
       try {
