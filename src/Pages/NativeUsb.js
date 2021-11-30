@@ -14,7 +14,7 @@ const NativeUsb = () => {
    */
 
      const handlePulseOximeterData = (data) => {
-      setPulseOximeterReadings([data.data])
+      setPulseOximeterReadings([data])
     }
     const handlePulseOximeterChangeEvent = () => {
       setPulseOximeterStatus(pulseOximeterAdapter.status)
