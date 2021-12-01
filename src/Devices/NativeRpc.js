@@ -12,7 +12,9 @@ class NativeRpc {
   }
 
   _dataHandler = (data) => {
-    this._data.unshift(data);
+    if (data) {
+      this._data.unshift(data);
+    }
   };
 
   async *iterateData() {
