@@ -7,7 +7,7 @@ import './NativePlayground.css'
 
 const NativeBle = () => {
   const pulseOximeterAdapter = PulseOximeterLibrary.requestAdapter('taidoc-td8255-ble');
-  const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1241-ble');
+  const thermometerAdapter = ThermometerLibrary.requestAdapter('taidoc-td1107-ble');
   const bloodPressureAdapter = BloodPressureLibrary.requestAdapter('taidoc-td3128-ble');
 
 
